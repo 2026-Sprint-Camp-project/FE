@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 export const handlers = [
+  //==================================================================================================
   //회원가입
   http.post('/users/signup', async ({ request }) => {
     const body = await request.json();
