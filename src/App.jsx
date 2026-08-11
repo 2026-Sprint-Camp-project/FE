@@ -5,7 +5,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 function App() {
   return (
     <BrowserRouter>
-      {/* TODO: 인증 컨텍스트(AuthProvider) 구현 후 다시 감싸기 */}
+      {/*protectedRoute로 감싸야함.  */}
       <Routes>
         <Route path="/" element={<Navigate to="/signup" replace />} />
         <Route path="/login" element={<LoginPage />} />
