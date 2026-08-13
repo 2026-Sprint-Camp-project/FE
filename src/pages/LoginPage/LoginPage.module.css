@@ -5,7 +5,7 @@
   justify-content: center;
   width: 100%;
   min-height: 100svh;
-  background: var(--bg-primary, #fff);
+  background: var(--bg);
   box-sizing: border-box;
   padding: 24px;
 }
@@ -23,7 +23,7 @@
   margin: 0;
   font-size: 40px;
   font-weight: 700;
-  color: var(--text-primary, #0f1419);
+  color: var(--text);
 }
 
 .title {
@@ -32,7 +32,7 @@
   font-size: 24px;
   font-weight: 700;
   text-align: center;
-  color: var(--text-primary, #0f1419);
+  color: var(--text);
 }
 
 .form {
@@ -48,14 +48,14 @@
   gap: 4px;
   width: 100%;
   padding: 16px;
-  border: 1px solid var(--border-default, #eff3f4);
+  border: 1px solid var(--border);
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 .field label {
   font-size: 13px;
-  color: var(--text-secondary, #536471);
+  color: var(--text-secondary);
 }
 
 .field input {
@@ -64,7 +64,7 @@
   outline: none;
   padding: 0;
   font-size: 15px;
-  color: var(--text-primary, #0f1419);
+  color: var(--text);
   background: transparent;
   font-family: inherit;
 }
@@ -73,7 +73,7 @@
   width: 100%;
   margin: 0;
   font-size: 13px;
-  color: #f4212e;
+  color: var(--danger);
   text-align: left;
 }
 
@@ -82,8 +82,8 @@
   padding: 12px 32px;
   border: none;
   border-radius: 999px;
-  background: var(--accent-blue, #1d9bf0);
-  color: #fff;
+  background: var(--accent);
+  color: var(--text-on-accent);
   font-size: 15px;
   font-weight: 500;
   line-height: 1.35;
@@ -99,7 +99,7 @@
 .signupLink {
   margin: 0;
   font-size: 14px;
-  color: var(--accent-blue, #1d9bf0);
+  color: var(--accent);
   text-decoration: none;
 }
 
