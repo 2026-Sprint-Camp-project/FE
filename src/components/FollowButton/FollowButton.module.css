@@ -1,0 +1,33 @@
+.follow,
+.following {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.follow:disabled,
+.following:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.follow {
+  border: none;
+  background: var(--text);
+  color: var(--bg);
+}
+
+.following {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}

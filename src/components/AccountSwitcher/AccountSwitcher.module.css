@@ -1,0 +1,44 @@
+.switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--bg);
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.switcher:hover {
+  background: var(--bg-secondary);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.username {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.moreIcon {
+  flex-shrink: 0;
+  color: var(--text);
+}

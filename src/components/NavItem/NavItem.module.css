@@ -1,0 +1,23 @@
+.navItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px 12px 16px;
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.navItem:hover {
+  background: var(--bg-secondary);
+}
+
+.label {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.active .label {
+  font-weight: 700;
+}

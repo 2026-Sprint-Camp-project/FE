@@ -1,0 +1,33 @@
+.track {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  padding: 2px;
+  border: none;
+  border-radius: 999px;
+  background: var(--border);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.track:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.track.checked {
+  background: var(--accent);
+  justify-content: flex-end;
+}
+
+.knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease;
+}

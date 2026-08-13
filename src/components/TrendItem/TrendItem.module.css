@@ -1,0 +1,35 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+div.item {
+  cursor: default;
+}
+
+.category {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.hashtag {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.postCount {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
