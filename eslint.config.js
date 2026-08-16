@@ -29,6 +29,7 @@ export default [
       'no-unused-vars': 'warn',
       eqeqeq: 'error',
       'no-var': 'error',
+      'react/jsx-uses-vars': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
     },

@@ -11,7 +11,6 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import { useAuth } from './hooks/useAuth';
 
-// ProtectedRoute 하위 공통 레이아웃. 로그인된 유저 정보를 Layout의 user prop 형태로 변환해서 넘긴다.
 function AppLayout() {
   const { currentUser } = useAuth();
   const user = currentUser
@@ -22,8 +21,9 @@ function AppLayout() {
       }
     : undefined;
 
-  // TODO: 게시하기/계정 전환 모달은 아직 없음(공통/피드 담당 영역과 겹치는 부분) — 다음 단계 과제.
-  return <Layout user={user} onComposeClick={() => {}} onAccountClick={() => {}} />;
+  return (
+    <Layout user={user} onComposeClick={() => {}} onAccountClick={() => {}} />
+  );
 }
 
 function App() {
