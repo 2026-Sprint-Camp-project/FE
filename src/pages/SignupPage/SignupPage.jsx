@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signup, saveTokens } from '../../api/auth';
+import { useAuth } from '../../hooks/useAuth';
 import styles from './SignupPage.module.css';
 
 const INITIAL_FORM = {
@@ -13,6 +14,7 @@ const INITIAL_FORM = {
 
 function SignupPage() {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +39,7 @@ function SignupPage() {
     try {
       const data = await signup(formData);
       saveTokens(data.token);
+      refreshAuth();
       navigate('/');
     } catch (err) {
       setError(err.message || '회원가입에 실패했습니다.');

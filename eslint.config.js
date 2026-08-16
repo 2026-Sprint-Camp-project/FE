@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/**', 'public/mockServiceWorker.js'] },
+  { ignores: ['dist/**'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],

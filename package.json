@@ -27,13 +27,7 @@
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
     "mse": "^0.1.0",
-    "msw": "^2.15.0",
     "prettier": "^3.9.6",
     "vite": "^8.2.0"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
   }
 }
