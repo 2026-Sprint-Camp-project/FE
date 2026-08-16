@@ -53,12 +53,14 @@ function ProfilePage() {
   }, [username]);
 
   const handleFollowToggle = async () => {
+    // 이미 getUser()로 profile.userId를 알고 있으니, username -> id 재변환 없이 바로 호출한다.
+    const targetId = profile.userId;
     try {
       if (isFollowing) {
-        await relationsApi.unfollow(username);
+        await relationsApi.unfollow(targetId);
         setIsFollowing(false);
       } else {
-        await relationsApi.follow(username);
+        await relationsApi.follow(targetId);
         setIsFollowing(true);
       }
     } catch (err) {

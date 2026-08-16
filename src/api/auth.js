@@ -1,5 +1,3 @@
-// 인증 API (회원가입/로그인)
-
 import { request, saveTokens, getAccessToken, clearTokens } from './client';
 
 export { saveTokens, getAccessToken, clearTokens };

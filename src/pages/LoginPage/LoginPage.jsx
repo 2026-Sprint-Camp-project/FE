@@ -31,7 +31,7 @@ function LoginPage() {
       const data = await login(formData);
       saveTokens(data.token);
       refreshAuth();
-      navigate('/');
+      navigate(`/${data.user.username}`);
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다.');
     } finally {
@@ -74,7 +74,11 @@ function LoginPage() {
 
           {error && <p className={styles.errorMessage}>{error}</p>}
 
-          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isSubmitting}
+          >
             로그인
           </button>
         </form>

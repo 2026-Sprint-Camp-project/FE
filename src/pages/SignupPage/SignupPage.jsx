@@ -40,7 +40,7 @@ function SignupPage() {
       const data = await signup(formData);
       saveTokens(data.token);
       refreshAuth();
-      navigate('/');
+      navigate(`/${data.user.username}`);
     } catch (err) {
       setError(err.message || '회원가입에 실패했습니다.');
     } finally {
@@ -55,7 +55,6 @@ function SignupPage() {
         <p className={styles.title}>계정을 생성하세요</p>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
-          {/* Figma 디자인에는 없지만, 로그인/mock 핸들러가 username을 요구해 추가한 필드 */}
           <div className={styles.field}>
             <label htmlFor="username">아이디</label>
             <input
@@ -123,7 +122,11 @@ function SignupPage() {
 
           {error && <p className={styles.errorMessage}>{error}</p>}
 
-          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isSubmitting}
+          >
             가입하기
           </button>
         </form>
