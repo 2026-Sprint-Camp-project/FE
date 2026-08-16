@@ -5,7 +5,11 @@ import { useAuth } from '../../hooks/useAuth';
  로그인 X -> /login
  */
 function ProtectedRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoadingUser } = useAuth();
+
+  if (isLoadingUser) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

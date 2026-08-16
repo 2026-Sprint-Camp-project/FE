@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, saveTokens } from '../../api/auth';
+import { useAuth } from '../../hooks/useAuth';
 import styles from './LoginPage.module.css';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +30,8 @@ function LoginPage() {
     try {
       const data = await login(formData);
       saveTokens(data.token);
-      navigate('/');
+      refreshAuth();
+      navigate(`/${data.user.username}`);
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다.');
     } finally {
@@ -71,7 +74,11 @@ function LoginPage() {
 
           {error && <p className={styles.errorMessage}>{error}</p>}
 
-          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isSubmitting}
+          >
             로그인
           </button>
         </form>

@@ -1,0 +1,21 @@
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}

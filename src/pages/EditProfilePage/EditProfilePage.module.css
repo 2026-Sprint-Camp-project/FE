@@ -1,0 +1,75 @@
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.bioLabel {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 0;
+  resize: vertical;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+}
+
+.errorMessage {
+  margin: 0;
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
