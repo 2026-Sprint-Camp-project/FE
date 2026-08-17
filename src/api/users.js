@@ -1,14 +1,3 @@
-// 유저/프로필/설정 API
-//
-// 실제 백엔드(Railway 배포)를 직접 찔러본 결과, GET /users/:userId는 숫자 id만 받고
-// username은 안 받는다(문자열을 넣으면 404 취급). 그런데 라우트는 /:username 기반이라
-// 항상 username -> userId 변환이 필요해서 resolveUserId()로 그 변환을 감춘다.
-// (검색 API로 username이 정확히 일치하는 유저를 찾아 id를 얻는 방식)
-//
-// 참고: GET /users?keyword= 응답은 user_id(snake_case)를 쓰는데,
-// 나머지 엔드포인트는 전부 userId(camelCase)를 쓴다 — 백엔드 쪽 필드명이 일관돼 있지 않아서
-// resolveUserId에서 둘 다 방어적으로 읽는다.
-
 import { request, authHeader } from './client';
 
 /** 내 프로필 조회 */

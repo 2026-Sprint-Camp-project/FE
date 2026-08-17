@@ -41,7 +41,8 @@ function EditProfilePage() {
         });
       })
       .catch((err) => {
-        if (!cancelled) setError(err.message || '프로필을 불러오지 못했습니다.');
+        if (!cancelled)
+          setError(err.message || '프로필을 불러오지 못했습니다.');
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -62,7 +63,8 @@ function EditProfilePage() {
     setIsSubmitting(true);
 
     try {
-      const data = await usersApi.updateMe(form);
+      const payload = { ...form, birthDate: form.birthDate || null };
+      const data = await usersApi.updateMe(payload);
       refreshAuth();
       navigate(`/${data.user.username}`);
     } catch (err) {
@@ -77,14 +79,26 @@ function EditProfilePage() {
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
-        <button type="button" className={styles.backButton} onClick={() => navigate(-1)} aria-label="뒤로가기">
+        <button
+          type="button"
+          className={styles.backButton}
+          onClick={() => navigate(-1)}
+          aria-label="뒤로가기"
+        >
           ←
         </button>
         <p className={styles.title}>프로필 수정</p>
       </header>
 
       <form className={styles.form} onSubmit={handleSubmit} noValidate>
-        <Input id="name" name="name" label="이름" value={form.name} onChange={handleChange} required />
+        <Input
+          id="name"
+          name="name"
+          label="이름"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
 
         <div className={styles.field}>
           <label htmlFor="bio" className={styles.bioLabel}>
@@ -100,7 +114,13 @@ function EditProfilePage() {
           />
         </div>
 
-        <Input id="location" name="location" label="위치" value={form.location} onChange={handleChange} />
+        <Input
+          id="location"
+          name="location"
+          label="위치"
+          value={form.location}
+          onChange={handleChange}
+        />
         <Input
           id="birthDate"
           name="birthDate"
