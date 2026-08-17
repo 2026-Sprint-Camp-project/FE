@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist/**', 'public/mockServiceWorker.js'] },
+  { ignores: ['dist/**'] },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],
@@ -29,6 +29,7 @@ export default [
       'no-unused-vars': 'warn',
       eqeqeq: 'error',
       'no-var': 'error',
+      'react/jsx-uses-vars': 'error',
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
     },
