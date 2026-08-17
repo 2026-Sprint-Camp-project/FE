@@ -1,0 +1,119 @@
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.banner {
+  width: 100%;
+  height: 150px;
+  background-color: var(--bg-secondary);
+  background-size: cover;
+  background-position: center;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px 16px;
+}
+
+.avatarRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -40px;
+}
+
+.avatar {
+  border: 4px solid var(--bg);
+  background: var(--bg);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.username {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-secondary);
+}
+
+.bio {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.location {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.counts {
+  display: flex;
+  gap: 20px;
+}
+
+.countLink {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.countLink strong {
+  color: var(--text);
+}
+
+.countLink:hover {
+  text-decoration: underline;
+}
+
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.errorMessage {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--danger);
+}
