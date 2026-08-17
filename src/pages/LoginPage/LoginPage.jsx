@@ -27,7 +27,13 @@ function LoginPage() {
 
     try {
       const data = await login(formData);
-      saveTokens(data.token);
+      const token = data?.accessToken || data?.token;
+
+      if (token) {
+        saveTokens(token);
+      }
+
+      // 로그인 성공 시 메인 홈피드로 이동
       navigate('/');
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다.');

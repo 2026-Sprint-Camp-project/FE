@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import NavItem from '../NavItem/NavItem';
 import Button from '../Button/Button';
 import AccountSwitcher from '../AccountSwitcher/AccountSwitcher';
+import RightSidebar from '../RightSidebar/RightSidebar';
 import styles from './Layout.module.css';
 
 // "더보기"는 실제 X처럼 드롭다운 메뉴가 될 수도 있지만, Figma에 목적지가
@@ -67,6 +68,8 @@ function Layout({ user, onComposeClick, onAccountClick }) {
       <main className={styles.main}>
         <Outlet />
       </main>
+
+      <RightSidebar />
     </div>
   );
 }
