@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SignupPage from './pages/SignupPage/SignupPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import HomePage from './pages/HomePage/HomePage';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import EditProfilePage from './pages/EditProfilePage/EditProfilePage';
 import FollowersPage from './pages/FollowersPage/FollowersPage';
@@ -30,12 +31,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/signup" replace />} />
+        {/* 로그인 / 회원가입 (사이드바 없는 독립 페이지) */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
+            <Route path="/" element={<HomePage />} />
             <Route path="/lists" element={<ListsPage />} />
             <Route path="/settings" element={<SettingPage />} />
             <Route path="/settings/profile" element={<EditProfilePage />} />

@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import NavItem from '../NavItem/NavItem';
 import Button from '../Button/Button';
 import AccountSwitcher from '../AccountSwitcher/AccountSwitcher';
+import RightSidebar from '../RightSidebar/RightSidebar';
 import styles from './Layout.module.css';
 
 const NAV_ITEMS = [
@@ -60,6 +61,8 @@ function Layout({ user, onComposeClick, onAccountClick }) {
       <main className={styles.main}>
         <Outlet />
       </main>
+
+      <RightSidebar />
     </div>
   );
 }

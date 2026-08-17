@@ -1,7 +1,12 @@
 .shell {
   display: flex;
+  flex-direction: row; /* 좌/우 가로 배치 명시 */
+  justify-content: center;
   width: 100%;
-  min-height: 100svh;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .sidebar {
@@ -9,18 +14,22 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  width: 320px;
-  flex-shrink: 0;
-  padding: 24px 16px 24px 20px;
-  border-right: 1px solid var(--border);
+  width: 275px;
+  min-width: 275px; /* 너비 감소 방지 */
+  flex-shrink: 0;   /* 메인 컨텐츠에 밀려 축소되는 현상 방지 */
+  padding: 16px 20px;
+  border-right: 1px solid var(--border, #e1e8ed);
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: 100vh;
 }
 
 .logo {
   margin: 0 0 8px;
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text, #0f1419);
 }
 
 .nav {
@@ -37,5 +46,19 @@
 
 .main {
   flex: 1;
-  min-width: 0;
+  max-width: 600px; /* 메인 타임라인 폭 제한 */
+  min-width: 0;     /* Flex 자식 요소 최소 폭 리셋 */
+  border-right: 1px solid var(--border, #e1e8ed);
+  box-sizing: border-box;
+}
+
+.rightSidebar {
+  width: 350px;
+  min-width: 350px;
+  flex-shrink: 0;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
 }

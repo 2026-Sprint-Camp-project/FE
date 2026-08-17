@@ -31,7 +31,9 @@ function LoginPage() {
       const data = await login(formData);
       saveTokens(data.token);
       refreshAuth();
-      navigate(`/${data.user.username}`);
+
+      // 로그인 성공 시 메인 홈피드로 이동
+      navigate('/');
     } catch (err) {
       setError(err.message || '로그인에 실패했습니다.');
     } finally {
