@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getPosts, createPost } from '../../api/posts';
+import { useNavigate } from 'react-router-dom';
 import Tabs from '../../components/Tabs/Tabs';
 import ComposeBox from '../../components/ComposeBox/ComposeBox';
 import TweetCard from '../../components/TweetCard/TweetCard';
@@ -8,6 +9,7 @@ function HomePage() {
   const [activeTab, setActiveTab] = useState('recommend');
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
+  const navigate = useNavigate();
 
   // 게시글 목록 불러오기
   const fetchPosts = async () => {
@@ -82,6 +84,8 @@ function HomePage() {
               likes: post.likeCount ?? 0,
             }}
             isLiked={post.isLiked}
+            // 클릭 시 상세 페이지로 이동하도록 추가
+            onClick={() => navigate(`/posts/${post.postId || post.id}`)}
           />
         ))
       ) : (
