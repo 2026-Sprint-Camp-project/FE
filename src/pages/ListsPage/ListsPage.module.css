@@ -4,6 +4,10 @@
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
 }
@@ -13,6 +17,20 @@
   font-size: 20px;
   font-weight: 700;
   color: var(--text);
+}
+
+.statusMessage {
+  margin: 0;
+  padding: 24px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.errorMessage {
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--danger);
 }
 
 .emptyState {
@@ -35,4 +53,106 @@
   margin: 0 0 12px;
   font-size: 15px;
   color: var(--text-secondary);
+}
+
+/* 리스트 행 */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rowMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rowTitle {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: var(--text);
+}
+
+.rowDescription {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.deleteButton {
+  flex-shrink: 0;
+  margin-right: 16px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--danger);
+  cursor: pointer;
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 새 리스트 만들기 모달 */
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.privacyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.privacyLabel {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.formActions > * {
+  flex: 1;
 }

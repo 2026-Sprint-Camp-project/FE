@@ -83,3 +83,12 @@ export function updateUsername(newUsername) {
     body: JSON.stringify({ newUsername }),
   });
 }
+
+/** 비밀번호 검증 (아이디/이메일/비밀번호 변경 전 본인 확인용) */
+export function verifyPassword(password) {
+  return request('/users/me/settings/verification', {
+    method: 'POST',
+    headers: authHeader(),
+    body: JSON.stringify({ password }),
+  });
+}

@@ -47,3 +47,56 @@ export async function getFollowing(idOrUsername, page) {
     headers: authHeader(),
   });
 }
+
+/** 게시글 북마크 저장 */
+export function bookmarkPost(postId) {
+  return request(`/posts/${postId}/bookmarks`, {
+    method: 'POST',
+    headers: authHeader(),
+  });
+}
+
+/** 게시글 북마크 취소 */
+export function unbookmarkPost(postId) {
+  return request(`/posts/${postId}/bookmarks`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  });
+}
+
+/** 내 북마크 목록 조회 (커서 페이지네이션) */
+export function getMyBookmarks(page) {
+  return request(`/users/me/bookmarks${buildQuery(page)}`, {
+    headers: authHeader(),
+  });
+}
+
+/** 리포스트 */
+export function repost(postId) {
+  return request(`/posts/${postId}/reposts`, {
+    method: 'POST',
+    headers: authHeader(),
+  });
+}
+
+/** 리포스트 취소 */
+export function unrepost(postId) {
+  return request(`/posts/${postId}/reposts`, {
+    method: 'DELETE',
+    headers: authHeader(),
+  });
+}
+
+/** 리포스트한 사용자 목록 (커서 페이지네이션) */
+export function getReposters(postId, page) {
+  return request(`/posts/${postId}/reposts${buildQuery(page)}`, {
+    headers: authHeader(),
+  });
+}
+
+/** 알림 목록 조회 (커서 페이지네이션) */
+export function getNotifications(page) {
+  return request(`/notifications${buildQuery(page)}`, {
+    headers: authHeader(),
+  });
+}
