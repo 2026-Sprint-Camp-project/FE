@@ -48,16 +48,16 @@ export function searchUsers(keyword) {
   });
 }
 
-/** 계정 공개/비공개 설정 */
+/** 계정 공개/비공개 설정 (변경 전 verifyPassword로 본인 확인 필요) */
 export function updatePrivacy(isPrivate) {
-  return request('/users/me/privacy', {
+  return request('/users/me/settings/privacy', {
     method: 'PATCH',
     headers: authHeader(),
     body: JSON.stringify({ isPrivate }),
   });
 }
 
-/** 비밀번호 변경 (성공 시 새 token을 내려준다) */
+/** 비밀번호 변경 (성공 시 새 token을 내려준다. 변경 전 verifyPassword로 본인 확인 필요) */
 export function updatePassword(newPassword) {
   return request('/users/me/settings/password', {
     method: 'PATCH',
@@ -66,7 +66,7 @@ export function updatePassword(newPassword) {
   });
 }
 
-/** 이메일 변경 */
+/** 이메일 변경 (변경 전 verifyPassword로 본인 확인 필요) */
 export function updateEmail(newEmail) {
   return request('/users/me/settings/email', {
     method: 'PATCH',
@@ -75,7 +75,7 @@ export function updateEmail(newEmail) {
   });
 }
 
-/** 아이디(username) 변경 */
+/** 아이디(username) 변경 (변경 전 verifyPassword로 본인 확인 필요) */
 export function updateUsername(newUsername) {
   return request('/users/me/settings/username', {
     method: 'PATCH',
