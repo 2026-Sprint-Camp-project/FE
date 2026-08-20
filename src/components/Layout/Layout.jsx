@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import NavItem from '../NavItem/NavItem';
 import Button from '../Button/Button';
 import AccountSwitcher from '../AccountSwitcher/AccountSwitcher';
-import RightSidebar from '../RightSidebar/RightSidebar';
+import RightSidebar from '../RightSideBar/RightSideBar';
 import styles from './Layout.module.css';
 
 const NAV_ITEMS = [
