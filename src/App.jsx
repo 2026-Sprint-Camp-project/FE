@@ -7,12 +7,13 @@ import EditProfilePage from './pages/EditProfilePage/EditProfilePage';
 import FollowersPage from './pages/FollowersPage/FollowersPage';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
 import ListsPage from './pages/ListsPage/ListsPage';
+import ListDetailPage from './pages/ListDetailPage/ListDetailPage';
+import SearchPage from './pages/SearchPage/SearchPage';
 import SettingPage from './pages/SettingPage/SettingPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import { useAuth } from './hooks/useAuth';
 import TweetDetailPage from './pages/TweetDetailPage/TweetDetailPage';
-import SearchPage from './pages/SearchPage/SearchPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import BookmarksPage from './pages/BookmarksPage/BookmarksPage';
 
@@ -47,6 +48,8 @@ function App() {
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/lists" element={<ListsPage />} />
+            <Route path="/lists/:listId" element={<ListDetailPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/settings" element={<SettingPage />} />
             <Route path="/settings/profile" element={<EditProfilePage />} />
             <Route path="/:username" element={<ProfilePage />} />

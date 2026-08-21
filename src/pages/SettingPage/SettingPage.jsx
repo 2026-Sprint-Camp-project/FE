@@ -34,10 +34,36 @@ function SettingPage() {
   const { currentUser, logout, refreshAuth } = useAuth();
 
   const [isPrivate, setIsPrivate] = useState(Boolean(currentUser?.isPrivate));
+
+  // 1단계: 비밀번호 확인 (아이디/이메일/비밀번호/공개설정 변경 전 공통으로 거쳐야 함)
+  // pendingModal: 확인 통과 후 진행할 작업 — 'username' | 'email' | 'password' | 'privacy'
+  const [pendingModal, setPendingModal] = useState(null);
+  const [pendingPrivacyValue, setPendingPrivacyValue] = useState(null);
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  const [verifyValue, setVerifyValue] = useState('');
+  const [verifyError, setVerifyError] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // 2단계: 실제 값 수정 모달 (비밀번호 확인 통과 후에만 열림)
   const [activeModal, setActiveModal] = useState(null); // 'username' | 'email' | 'password' | null
   const [fieldValue, setFieldValue] = useState('');
   const [fieldError, setFieldError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const requestVerification = (modalKey, privacyValue = null) => {
+    setPendingModal(modalKey);
+    setPendingPrivacyValue(privacyValue);
+    setVerifyValue('');
+    setVerifyError('');
+    setIsVerifyOpen(true);
+  };
+
+  const closeVerifyModal = () => {
+    if (isVerifying) return;
+    setIsVerifyOpen(false);
+    setPendingModal(null);
+    setPendingPrivacyValue(null);
+  };
 
   const openModal = (key) => {
     setActiveModal(key);
@@ -51,14 +77,46 @@ function SettingPage() {
     setFieldError('');
   };
 
-  const handleTogglePrivate = async (next) => {
+  const applyPrivacyChange = async (next) => {
+    const prev = isPrivate;
     setIsPrivate(next); // 낙관적 업데이트
     try {
       await usersApi.updatePrivacy(next);
     } catch (err) {
-      setIsPrivate(!next); // 실패 시 롤백
+      setIsPrivate(prev); // 실패 시 롤백
       window.alert(err.message || '설정 변경에 실패했습니다.');
     }
+  };
+
+  const handleVerifyConfirm = async () => {
+    if (!verifyValue) {
+      setVerifyError('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    setVerifyError('');
+    setIsVerifying(true);
+    try {
+      await usersApi.verifyPassword(verifyValue);
+      setIsVerifyOpen(false);
+
+      if (pendingModal === 'privacy') {
+        await applyPrivacyChange(pendingPrivacyValue);
+        setPendingModal(null);
+        setPendingPrivacyValue(null);
+      } else {
+        openModal(pendingModal);
+        setPendingModal(null);
+      }
+    } catch (err) {
+      setVerifyError(err.message || '비밀번호가 일치하지 않습니다.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleTogglePrivateRequest = (next) => {
+    requestVerification('privacy', next);
   };
 
   const handleConfirmModal = async () => {
@@ -103,21 +161,49 @@ function SettingPage() {
           title="프로필 수정"
           onClick={() => navigate('/settings/profile')}
         />
-        <SettingRow title="아이디 변경" onClick={() => openModal('username')} />
-        <SettingRow title="이메일 변경" onClick={() => openModal('email')} />
+        <SettingRow
+          title="아이디 변경"
+          onClick={() => requestVerification('username')}
+        />
+        <SettingRow
+          title="이메일 변경"
+          onClick={() => requestVerification('email')}
+        />
         <SettingRow
           title="비밀번호 변경"
-          onClick={() => openModal('password')}
+          onClick={() => requestVerification('password')}
         />
         <SettingRow
           title="비공개 계정"
           description="비공개 계정으로 전환하면 팔로우를 승인한 사람만 게시물을 볼 수 있어요."
           trailing={
-            <ToggleSwitch checked={isPrivate} onChange={handleTogglePrivate} />
+            <ToggleSwitch
+              checked={isPrivate}
+              onChange={handleTogglePrivateRequest}
+            />
           }
         />
         <SettingRow title="로그아웃" onClick={handleLogout} />
       </section>
+
+      {isVerifyOpen && (
+        <EditFieldModal
+          title="비밀번호 확인"
+          description="보안을 위해 현재 비밀번호를 다시 입력해주세요."
+          fieldProps={{
+            id: 'verifyPassword',
+            label: '비밀번호',
+            type: 'password',
+            value: verifyValue,
+            onChange: (e) => setVerifyValue(e.target.value),
+            error: verifyError,
+          }}
+          confirmText="확인"
+          onCancel={closeVerifyModal}
+          onConfirm={handleVerifyConfirm}
+          isSubmitting={isVerifying}
+        />
+      )}
 
       {activeModalConfig && (
         <EditFieldModal

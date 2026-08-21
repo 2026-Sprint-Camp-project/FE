@@ -1,15 +1,32 @@
 // src/components/RightSidebar/RightSidebar.jsx
-import React from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from '../Layout/Layout.module.css'; // Layout.module.css 불러오기
 
 function RightSidebar() {
+  const navigate = useNavigate();
+  const [keyword, setKeyword] = useState('');
+
+  // 검색창 제출 시 /search 페이지로 이동해서 실제 검색을 수행한다.
+  // (트렌드/추천 계정 위젯은 아직 목업 — 여기서는 손대지 않음)
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const trimmed = keyword.trim();
+    navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');
+  };
+
   return (
     <aside className={styles.rightSidebar}>
       {/* 1. 검색 영역 */}
-      <div style={{ background: '#eff3f4', borderRadius: '9999px', padding: '12px 16px' }}>
+      <form
+        onSubmit={handleSearchSubmit}
+        style={{ background: '#eff3f4', borderRadius: '9999px', padding: '12px 16px' }}
+      >
         <input
           type="text"
           placeholder="검색"
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
           style={{
             border: 'none',
             background: 'transparent',
@@ -18,7 +35,7 @@ function RightSidebar() {
             fontSize: '15px',
           }}
         />
-      </div>
+      </form>
 
       {/* 2. 실시간 트렌드 위젯 */}
       <div style={{ background: '#f7f9f9', borderRadius: '16px', padding: '16px' }}>

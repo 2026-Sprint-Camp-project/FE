@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import NavItem from '../NavItem/NavItem';
+import NavMoreItem from '../NavMoreItem/NavMoreItem';
 import Button from '../Button/Button';
 import AccountSwitcher from '../AccountSwitcher/AccountSwitcher';
 import RightSidebar from '../RightSideBar/RightSideBar';
@@ -41,6 +42,7 @@ function Layout({ user, onComposeClick, onAccountClick }) {
               to={item.to}
             />
           ))}
+          <NavMoreItem />
         </nav>
 
         <Button fullWidth onClick={onComposeClick}>

@@ -6,6 +6,7 @@ import FollowButton from '../../components/FollowButton/FollowButton';
 import Tabs from '../../components/Tabs/Tabs';
 import * as usersApi from '../../api/users';
 import * as relationsApi from '../../api/relations';
+import * as listsApi from '../../api/lists';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './ProfilePage.module.css';
 
@@ -14,6 +15,7 @@ const TABS = [
   { key: 'replies', label: '답글' },
   { key: 'media', label: '미디어' },
   { key: 'likes', label: '좋아요' },
+  { key: 'lists', label: '리스트' },
 ];
 
 function ProfilePage() {
@@ -26,6 +28,10 @@ function ProfilePage() {
   const [error, setError] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState('posts');
+
+  const [lists, setLists] = useState([]);
+  const [isListsLoading, setIsListsLoading] = useState(false);
+  const [listsError, setListsError] = useState('');
 
   const isOwnProfile = currentUser?.username === username;
 
@@ -51,6 +57,30 @@ function ProfilePage() {
       cancelled = true;
     };
   }, [username]);
+
+  // '리스트' 탭을 눌렀을 때만 조회한다 (다른 사용자의 리스트도 여기로 조회됨)
+  useEffect(() => {
+    if (activeTab !== 'lists') return undefined;
+    let cancelled = false;
+    setIsListsLoading(true);
+    setListsError('');
+
+    listsApi
+      .getUserLists(username)
+      .then((data) => {
+        if (!cancelled) setLists(data.lists ?? []);
+      })
+      .catch((err) => {
+        if (!cancelled) setListsError(err.message || '리스트를 불러오지 못했습니다.');
+      })
+      .finally(() => {
+        if (!cancelled) setIsListsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, username]);
 
   const handleFollowToggle = async () => {
     const targetId = profile.userId;
@@ -149,7 +179,62 @@ function ProfilePage() {
 
       <Tabs items={TABS} activeKey={activeTab} onChange={setActiveTab} />
 
-      <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+      {activeTab === 'lists' ? (
+        <div className={styles.listsSection}>
+          {isListsLoading && (
+            <p className={styles.statusMessage}>불러오는 중…</p>
+          )}
+          {!isListsLoading && listsError && (
+            <p className={styles.errorMessage}>{listsError}</p>
+          )}
+          {!isListsLoading && !listsError && lists.length === 0 && (
+            <p className={styles.emptyState}>
+              {isOwnProfile
+                ? '아직 만든 리스트가 없습니다.'
+                : '공개된 리스트가 없습니다.'}
+            </p>
+          )}
+          {!isListsLoading && !listsError && lists.length > 0 && (
+            <div className={styles.listRows}>
+              {lists.map((list) =>
+                isOwnProfile ? (
+                  <button
+                    key={list.listId}
+                    type="button"
+                    className={styles.listRow}
+                    onClick={() =>
+                      navigate(`/lists/${list.listId}`, { state: { list } })
+                    }
+                  >
+                    <p className={styles.listRowTitle}>
+                      {list.listName}
+                      {list.isPrivate && (
+                        <span className={styles.badge}>비공개</span>
+                      )}
+                    </p>
+                    {list.description && (
+                      <p className={styles.listRowDescription}>
+                        {list.description}
+                      </p>
+                    )}
+                  </button>
+                ) : (
+                  <div key={list.listId} className={styles.listRow}>
+                    <p className={styles.listRowTitle}>{list.listName}</p>
+                    {list.description && (
+                      <p className={styles.listRowDescription}>
+                        {list.description}
+                      </p>
+                    )}
+                  </div>
+                ),
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+      )}
     </div>
   );
 }
