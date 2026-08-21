@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import NavItem from '../NavItem/NavItem';
+import NavMoreItem from '../NavMoreItem/NavMoreItem';
 import Button from '../Button/Button';
 import AccountSwitcher from '../AccountSwitcher/AccountSwitcher';
 import RightSidebar from '../RightSideBar/RightSideBar';
@@ -9,21 +10,11 @@ const NAV_ITEMS = [
   { key: 'home', icon: 'home', label: '홈', to: '/' },
   { key: 'search', icon: 'search', label: '검색', to: '/search' },
   { key: 'notifications', icon: 'bell', label: '알림', to: '/notifications' },
-  { key: 'more', icon: 'more', label: '설정', to: '/settings' },
 ];
 
 function Layout({ user, onComposeClick, onAccountClick }) {
   const navItems = user
-    ? [
-        ...NAV_ITEMS.slice(0, 3),
-        {
-          key: 'profile',
-          icon: 'user',
-          label: '프로필',
-          to: `/${user.username}`,
-        },
-        ...NAV_ITEMS.slice(3),
-      ]
+    ? [...NAV_ITEMS, { key: 'profile', icon: 'user', label: '프로필', to: `/${user.username}` }]
     : NAV_ITEMS;
 
   return (
@@ -40,6 +31,7 @@ function Layout({ user, onComposeClick, onAccountClick }) {
               to={item.to}
             />
           ))}
+          <NavMoreItem />
         </nav>
 
         <Button fullWidth onClick={onComposeClick}>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import Input from '../../components/Input/Input';
 import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
@@ -10,6 +11,7 @@ import styles from './ListsPage.module.css';
 const EMPTY_CREATE_FORM = { listName: '', description: '', isPrivate: false };
 
 function ListsPage() {
+  const navigate = useNavigate();
   const [lists, setLists] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -169,7 +171,7 @@ function ListsPage() {
               <button
                 type="button"
                 className={styles.rowMain}
-                onClick={() => openEditModal(list)}
+                onClick={() => navigate(`/lists/${list.listId}`, { state: { list } })}
               >
                 <p className={styles.rowTitle}>
                   {list.listName}
@@ -178,6 +180,14 @@ function ListsPage() {
                 {list.description && (
                   <p className={styles.rowDescription}>{list.description}</p>
                 )}
+              </button>
+              <button
+                type="button"
+                className={styles.editButton}
+                aria-label={`${list.listName} 이름 수정`}
+                onClick={() => openEditModal(list)}
+              >
+                수정
               </button>
               <button
                 type="button"

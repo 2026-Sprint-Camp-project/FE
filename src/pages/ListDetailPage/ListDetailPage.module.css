@@ -1,0 +1,153 @@
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.backButton {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.description {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.listActions {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionTitle {
+  margin: 0;
+  padding: 16px 20px 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.addSection {
+  border-bottom: 8px solid var(--bg-secondary);
+}
+
+.addSection > :global(form) {
+  margin: 0 20px 12px;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchResults > * {
+  padding: 8px 20px;
+}
+
+.membersSection {
+  padding-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list > * {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.statusMessage {
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.errorMessage {
+  margin: 0;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--danger);
+}
+
+.emptyState {
+  margin: 0;
+  padding: 24px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.addButton,
+.addedButton,
+.removeButton {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.addButton {
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.addedButton,
+.removeButton {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.addButton:disabled,
+.addedButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.removeButton {
+  color: var(--danger);
+}
