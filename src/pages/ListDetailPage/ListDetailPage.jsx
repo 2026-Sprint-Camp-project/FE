@@ -10,12 +10,6 @@ import styles from './ListDetailPage.module.css';
 
 const DEBOUNCE_MS = 350;
 
-// 멤버 응답이 유저 객체를 그대로 줄 수도, { user: {...} } 형태로 감싸서 줄 수도 있어
-// 두 경우 모두 대응한다.
-function toMemberUser(member) {
-  return member.user ?? member;
-}
-
 /** 리스트 상세 화면: 리스트 이름/설명 확인, 이름 수정/삭제, 멤버 추가/조회/삭제 */
 function ListDetailPage() {
   const { listId } = useParams();
@@ -101,12 +95,13 @@ function ListDetailPage() {
   }, [keyword]);
 
   const isMember = (user) =>
-    members.some((member) => toMemberUser(member).username === user.username);
+    members.some((member) => member.username === user.username);
 
   const handleAddMember = async (user) => {
     setAddingUsername(user.username);
     try {
-      await listsApi.addListMember(listId, user.username);
+      // 검색 결과에 이미 userId가 있으니 username으로 다시 찾지 않고 바로 넘긴다
+      await listsApi.addListMember(listId, user.userId);
       setMembers((prev) => [...prev, user]);
     } catch (err) {
       window.alert(err.message || '멤버 추가에 실패했습니다.');
@@ -116,15 +111,11 @@ function ListDetailPage() {
   };
 
   const handleRemoveMember = async (member) => {
-    const memberUser = toMemberUser(member);
-    const memberId = memberUser.userId ?? memberUser.user_id;
-    if (!window.confirm(`@${memberUser.username}님을 리스트에서 뺄까요?`)) return;
+    if (!window.confirm(`@${member.username}님을 리스트에서 뺄까요?`)) return;
 
     try {
-      await listsApi.removeListMember(listId, memberId);
-      setMembers((prev) =>
-        prev.filter((m) => toMemberUser(m).username !== memberUser.username),
-      );
+      await listsApi.removeListMember(listId, member.userId);
+      setMembers((prev) => prev.filter((m) => m.username !== member.username));
     } catch (err) {
       window.alert(err.message || '멤버 삭제에 실패했습니다.');
     }
@@ -266,27 +257,24 @@ function ListDetailPage() {
 
         {!isLoading && !error && members.length > 0 && (
           <div className={styles.list}>
-            {members.map((member) => {
-              const memberUser = toMemberUser(member);
-              return (
-                <UserRow
-                  key={memberUser.userId ?? memberUser.username}
-                  avatarUrl={memberUser.profileImageUrl}
-                  name={memberUser.name}
-                  username={memberUser.username}
-                  onClick={() => navigate(`/${memberUser.username}`)}
-                  trailing={
-                    <button
-                      type="button"
-                      className={styles.removeButton}
-                      onClick={() => handleRemoveMember(member)}
-                    >
-                      삭제
-                    </button>
-                  }
-                />
-              );
-            })}
+            {members.map((member) => (
+              <UserRow
+                key={member.userId ?? member.username}
+                avatarUrl={member.profileImageUrl}
+                name={member.name}
+                username={member.username}
+                onClick={() => navigate(`/${member.username}`)}
+                trailing={
+                  <button
+                    type="button"
+                    className={styles.removeButton}
+                    onClick={() => handleRemoveMember(member)}
+                  >
+                    삭제
+                  </button>
+                }
+              />
+            ))}
           </div>
         )}
       </section>

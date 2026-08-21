@@ -18,7 +18,12 @@ export function updateMe(payload) {
 }
 
 export async function resolveUserId(idOrUsername) {
-  if (/^\d+$/.test(String(idOrUsername))) return idOrUsername;
+  // 이미 알고 있는 실제 userId는 항상 숫자(number) 타입으로 넘어온다(JSON에서 온 값
+  // 그대로 쓰는 profile.userId, member.userId 등). route param 등 문자열로 들어온 값은
+  // 숫자로만 이뤄져 있어도 username으로 보고 항상 검색한다 — username이 "1234"처럼
+  // 순수 숫자인 계정을 실제 id로 오인해서 엉뚱한 유저를 조회해버리는 버그가 있었다
+  // (문자열 형태만으로 "숫자면 id"라고 판단했던 게 원인).
+  if (typeof idOrUsername === 'number') return idOrUsername;
 
   const data = await request(
     `/users?keyword=${encodeURIComponent(idOrUsername)}`,
