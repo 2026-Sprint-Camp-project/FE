@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  getPosts, 
-  createPost, 
-  likePost, 
-  unlikePost, 
-  retweetPost, 
-  unretweetPost, 
-  bookmarkPost, 
-  unbookmarkPost 
+import {
+  getPosts,
+  createPost,
+  likePost,
+  unlikePost,
+  retweetPost,
+  unretweetPost,
+  bookmarkPost,
+  unbookmarkPost,
 } from '../../api/posts';
 
 import Tabs from '../../components/Tabs/Tabs';
@@ -61,8 +61,8 @@ function HomePage() {
   // 3. 좋아요 상호작용 (409 에러 방지 및 낙관적 업데이트)
   const handleLike = async (postId, currentIsLiked, currentLikeCount) => {
     const nextIsLiked = !currentIsLiked;
-    const nextLikeCount = nextIsLiked 
-      ? currentLikeCount + 1 
+    const nextLikeCount = nextIsLiked
+      ? currentLikeCount + 1
       : Math.max(0, currentLikeCount - 1);
 
     // UI 즉시 변경
@@ -74,11 +74,11 @@ function HomePage() {
             ...post,
             isLiked: nextIsLiked,
             liked: nextIsLiked, // 백엔드 필드명도 같이 업데이트
-            likeCount: nextLikeCount
+            likeCount: nextLikeCount,
           };
         }
         return post;
-      })
+      }),
     );
 
     try {
@@ -94,10 +94,14 @@ function HomePage() {
   };
 
   // 4. 리트윗(리포스트) 상호작용
-  const handleRetweet = async (postId, currentIsRetweeted, currentRetweetCount) => {
+  const handleRetweet = async (
+    postId,
+    currentIsRetweeted,
+    currentRetweetCount,
+  ) => {
     const nextIsRetweeted = !currentIsRetweeted;
-    const nextRetweetCount = nextIsRetweeted 
-      ? currentRetweetCount + 1 
+    const nextRetweetCount = nextIsRetweeted
+      ? currentRetweetCount + 1
       : Math.max(0, currentRetweetCount - 1);
 
     setPosts((prevPosts) =>
@@ -109,11 +113,11 @@ function HomePage() {
             isRetweeted: nextIsRetweeted,
             reposted: nextIsRetweeted, // 백엔드 필드명(reposted) 동기화
             retweetCount: nextRetweetCount,
-            repostCount: nextRetweetCount
+            repostCount: nextRetweetCount,
           };
         }
         return post;
-      })
+      }),
     );
 
     try {
@@ -136,14 +140,14 @@ function HomePage() {
       prevPosts.map((post) => {
         const id = post.postId || post.id;
         if (id === postId) {
-          return { 
-            ...post, 
+          return {
+            ...post,
             isBookmarked: nextIsBookmarked,
-            bookmarked: nextIsBookmarked 
+            bookmarked: nextIsBookmarked,
           };
         }
         return post;
-      })
+      }),
     );
 
     try {
@@ -185,15 +189,16 @@ function HomePage() {
       {Array.isArray(posts) && posts.length > 0 ? (
         posts.map((post) => {
           const postId = post.postId || post.id;
-          
+
           // ✨ API 명세서의 liked, reposted, bookmarked 값을 최우선으로 확인!
           const isLiked = post.liked ?? post.isLiked ?? false;
           const isRetweeted = post.reposted ?? post.isRetweeted ?? false;
           const isBookmarked = post.bookmarked ?? post.isBookmarked ?? false;
-          
+
           // 카운트 필드명도 안전하게 전부 탐색
           const likeCount = post.likeCount ?? post.likes ?? 0;
-          const retweetCount = post.repostCount ?? post.retweetCount ?? post.retweets ?? 0;
+          const retweetCount =
+            post.repostCount ?? post.retweetCount ?? post.retweets ?? 0;
           const replyCount = post.replyCount ?? post.replies ?? 0;
 
           return (
@@ -202,7 +207,10 @@ function HomePage() {
               author={{
                 name: name || post.authorName || post.user?.name || '사용자',
                 username: post.username || post.user?.username || 'user',
-                avatarUrl: post.avatarUrl || post.profileImageUrl || post.user?.avatarUrl,
+                avatarUrl:
+                  post.avatarUrl ||
+                  post.profileImageUrl ||
+                  post.user?.avatarUrl,
               }}
               createdAt={post.createdAt}
               content={post.content}
@@ -224,7 +232,9 @@ function HomePage() {
           );
         })
       ) : (
-        <div style={{ padding: '40px 0', textAlign: 'center', color: '#536471' }}>
+        <div
+          style={{ padding: '40px 0', textAlign: 'center', color: '#536471' }}
+        >
           게시글이 없습니다. 첫 번째 글을 작성해 보세요!
         </div>
       )}

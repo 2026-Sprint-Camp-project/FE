@@ -14,7 +14,6 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import { useAuth } from './hooks/useAuth';
 import TweetDetailPage from './pages/TweetDetailPage/TweetDetailPage';
-import SearchPage from './pages/SearchPage/SearchPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import BookmarksPage from './pages/BookmarksPage/BookmarksPage';
 
