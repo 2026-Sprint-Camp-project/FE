@@ -55,11 +55,16 @@ export const unbookmarkPost = async (postId) => {
 
 // 3. 리트윗 / 취소 API
 export const retweetPost = async (postId) => {
-  const response = await client.post(`/posts/${postId}/retweets`);
+  const response = await client.post(`/posts/${postId}/reposts`);
   return response.data;
 };
 
 export const unretweetPost = async (postId) => {
-  const response = await client.delete(`/posts/${postId}/retweets`);
+  const response = await client.delete(`/posts/${postId}/reposts`);
+  return response.data;
+};
+
+export const getBookmarks = async () => {
+  const response = await client.get('/users/me/bookmarks');
   return response.data;
 };

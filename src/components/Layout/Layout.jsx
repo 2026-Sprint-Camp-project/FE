@@ -9,20 +9,21 @@ const NAV_ITEMS = [
   { key: 'home', icon: 'home', label: '홈', to: '/' },
   { key: 'search', icon: 'search', label: '검색', to: '/search' },
   { key: 'notifications', icon: 'bell', label: '알림', to: '/notifications' },
+  { key: 'bookmarks', icon: 'bookmarks', label: '북마크', to: '/bookmarks'}, 
   { key: 'more', icon: 'more', label: '설정', to: '/settings' },
 ];
 
 function Layout({ user, onComposeClick, onAccountClick }) {
   const navItems = user
     ? [
-        ...NAV_ITEMS.slice(0, 3),
+        ...NAV_ITEMS.slice(0, 4),
         {
           key: 'profile',
           icon: 'user',
           label: '프로필',
           to: `/${user.username}`,
         },
-        ...NAV_ITEMS.slice(3),
+        ...NAV_ITEMS.slice(4),
       ]
     : NAV_ITEMS;
 

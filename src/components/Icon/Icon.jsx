@@ -85,6 +85,18 @@ const ICONS = {
       </>
     ),
   },
+  bookmarks: {
+    viewBox: '0 0 18 18',
+    paths: (
+      <path
+        d="M4.5 2.25H13.5C13.6989 2.25 13.8897 2.32902 14.0303 2.46967C14.171 2.61032 14.25 2.80109 14.25 3V15.75L9 12.75L3.75 15.75V3C3.75 2.80109 3.82902 2.61032 3.96967 2.46967C4.11032 2.32902 4.30109 2.25 4.5 2.25Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  }, 
   more: {
     viewBox: '0 0 30 30',
     paths: (
