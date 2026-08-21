@@ -46,6 +46,7 @@ function TweetCard({
     <div
       className={isClickable ? `${styles.card} ${styles.clickable}` : styles.card}
       onClick={onClick}
+      style={{ cursor: 'pointer' }}
     >
       <Avatar src={author.avatarUrl} name={author.name} size={50} />
       <div className={styles.content}>

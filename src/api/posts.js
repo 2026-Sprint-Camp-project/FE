@@ -13,38 +13,58 @@ export const createPost = async (content) => {
   return response.data;
 };
 
-// 3. 게시글 상세 조회 (GET /posts/:postId)
-export const getPost = async (postId) => {
+// 4. 게시글 상세 조회 (GET /posts/:postId)
+export const getPostDetail = async (postId) => {
   const response = await client.get(`/posts/${postId}`);
   return response.data;
 };
 
-// 4. 게시글 수정 (PATCH /posts/:postId)
-export const updatePost = async (postId, content) => {
-  const response = await client.patch(`/posts/${postId}`, { content });
+// 답글 목록 조회 (GET /posts/:postId/replies)
+export const getReplies = async (postId) => {
+  const response = await client.get(`/posts/${postId}/replies`);
   return response.data;
 };
 
-// 5. 게시글 삭제 (DELETE /posts/:postId)
-export const deletePost = async (postId) => {
-  const response = await client.delete(`/posts/${postId}`);
+// 답글 작성 (POST /posts/:postId/replies)
+export const createReply = async (postId, content) => {
+  const response = await client.post(`/posts/${postId}/replies`, { content });
   return response.data;
 };
 
-// 6. 좋아요 (POST /posts/:postId/likes)
+// 1. 좋아요 / 취소 API
 export const likePost = async (postId) => {
   const response = await client.post(`/posts/${postId}/likes`);
   return response.data;
 };
 
-// 7. 좋아요 취소 (DELETE /posts/:postId/likes)
 export const unlikePost = async (postId) => {
   const response = await client.delete(`/posts/${postId}/likes`);
   return response.data;
 };
 
-// 8. 좋아요 사용자 조회 (GET /posts/:postId/likes)
-export const getPostLikers = async (postId, params) => {
-  const response = await client.get(`/posts/${postId}/likes`, { params });
+// 2. 북마크 / 취소 API
+export const bookmarkPost = async (postId) => {
+  const response = await client.post(`/posts/${postId}/bookmarks`);
+  return response.data;
+};
+
+export const unbookmarkPost = async (postId) => {
+  const response = await client.delete(`/posts/${postId}/bookmarks`);
+  return response.data;
+};
+
+// 3. 리트윗 / 취소 API
+export const retweetPost = async (postId) => {
+  const response = await client.post(`/posts/${postId}/reposts`);
+  return response.data;
+};
+
+export const unretweetPost = async (postId) => {
+  const response = await client.delete(`/posts/${postId}/reposts`);
+  return response.data;
+};
+
+export const getBookmarks = async () => {
+  const response = await client.get('/users/me/bookmarks');
   return response.data;
 };
