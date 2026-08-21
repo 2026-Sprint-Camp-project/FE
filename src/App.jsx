@@ -11,6 +11,10 @@ import SettingPage from './pages/SettingPage/SettingPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import Layout from './components/Layout/Layout';
 import { useAuth } from './hooks/useAuth';
+import TweetDetailPage from './pages/TweetDetailPage/TweetDetailPage';
+import SearchPage from './pages/SearchPage/SearchPage';
+import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
+import BookmarksPage from './pages/BookmarksPage/BookmarksPage';
 
 function AppLayout() {
   const { currentUser } = useAuth();
@@ -38,6 +42,10 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/posts/:postId" element={<TweetDetailPage />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/lists" element={<ListsPage />} />
             <Route path="/settings" element={<SettingPage />} />
             <Route path="/settings/profile" element={<EditProfilePage />} />
