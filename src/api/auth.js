@@ -23,3 +23,10 @@ export function login(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+/**
+ * 토큰 재발급 (백엔드 응답 스펙 미정 — accessToken만 내려올 수 있음)
+ */
+export function refreshToken() {
+  return request('/users/refresh', { method: 'POST' });
+}

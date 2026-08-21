@@ -1,0 +1,33 @@
+.wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+}
+
+.results > * {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.statusMessage {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.errorMessage {
+  margin: 0;
+  font-size: 14px;
+  color: var(--danger);
+  text-align: center;
+}
