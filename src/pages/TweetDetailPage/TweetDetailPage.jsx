@@ -1,16 +1,17 @@
 // src/pages/TweetDetailPage/TweetDetailPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  getPostDetail, 
-  getReplies, 
-  likePost, 
-  unlikePost, 
-  bookmarkPost, 
-  unbookmarkPost, 
-  rePost, 
+import {
+  getPostDetail,
+  //getReplies,
+  likePost,
+  unlikePost,
+  bookmarkPost,
+  unbookmarkPost,
+  rePost,
   unrePost,
-  deletePost 
+  deletePost,
+  createReply
 } from '../../api/posts';
 
 import MainTweetCard from '../../components/MainTweetCard/MainTweetCard';
@@ -39,7 +40,7 @@ function TweetDetailPage() {
       await deletePost(postId);
       alert('게시글이 삭제되었습니다.');
       // 삭제 성공 시 홈 피드로 이동 (뒤로 가기 방지)
-      navigate('/', { replace: true }); 
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('게시글 삭제 실패:', err);
       alert('게시글 삭제에 실패했습니다. (작성자 본인만 가능)');
@@ -76,8 +77,8 @@ function TweetDetailPage() {
 
     const prevPost = { ...post };
     const nextIsLiked = !post.isLiked;
-    const nextLikeCount = nextIsLiked 
-      ? (post.likeCount || post.counts?.likes || 0) + 1 
+    const nextLikeCount = nextIsLiked
+      ? (post.likeCount || post.counts?.likes || 0) + 1
       : Math.max(0, (post.likeCount || post.counts?.likes || 0) - 1);
 
     // 1. UI 우선 변경
@@ -107,8 +108,8 @@ function TweetDetailPage() {
 
     const prevPost = { ...post };
     const nextIsReposted = !post.isReposted;
-    const nextRepostCount = nextIsReposted 
-      ? (post.repostCount || post.counts?.reposts || 0) + 1 
+    const nextRepostCount = nextIsReposted
+      ? (post.repostCount || post.counts?.reposts || 0) + 1
       : Math.max(0, (post.repostCount || post.counts?.reposts || 0) - 1);
 
     setPost({
@@ -163,9 +164,42 @@ function TweetDetailPage() {
   if (loading) return <div style={{ padding: '20px' }}>로딩 중...</div>;
   if (!post) return <div style={{ padding: '20px' }}>게시글을 찾을 수 없습니다.</div>;
 
+  const handleReplySubmit = async (content) => {
+    try {
+      // 1. 백엔드로 답글 작성 API 요청
+      const response = await createReply(postId, content);
+
+      // 2. 방금 작성한 답글을 화면에 즉시 띄우기 위한 가짜 객체 생성
+      const newReply = {
+        id: response.postId || Date.now(), // 백엔드에서 준 postId 사용
+        content: content,
+        createdAt: '방금 전',
+        authorName: '나', // 실제 currentUser 데이터가 있다면 연결해 주세요
+        username: 'me',
+        replyCount: 0,
+        repostCount: 0,
+        likeCount: 0,
+      };
+
+      // 3. 기존 답글 목록 맨 위에 새 답글 끼워넣기
+      setReplies((prevReplies) => [newReply, ...prevReplies]);
+
+      // 4. 메인 트윗의 답글 개수도 1개 올려주기
+      setPost((prev) => ({
+        ...prev,
+        replyCount: (prev.replyCount || 0) + 1,
+        counts: { ...prev.counts, replies: (prev.counts?.replies || 0) + 1 }
+      }));
+
+    } catch (err) {
+      console.error('답글 작성 실패:', err);
+      alert('답글 등록에 실패했습니다.');
+    }
+  };
+
   return (
     <div style={{ borderLeft: '1px solid #EFF3F4', borderRight: '1px solid #EFF3F4', minHeight: '100vh' }}>
-      
+
       {/* 헤더 */}
       <div style={{
         position: 'sticky', top: 0, backgroundColor: 'rgba(255, 255, 255, 0.85)',
@@ -181,20 +215,24 @@ function TweetDetailPage() {
       {/* 메인 게시글 카드 */}
       <MainTweetCard
         author={{
-          name: post?.authorName || post?.user?.name || post?.author?.name || '사용자',
-          username: post?.username || post?.user?.username || post?.author?.username || 'user',
-          avatarUrl: post?.avatarUrl || post?.user?.avatarUrl || post?.author?.avatarUrl,
+          // post.name을 최우선으로 찾도록 수정
+          name: post?.name || post?.authorName || post?.user?.name || '사용자',
+          username: post?.username || post?.user?.username || 'user',
+          avatarUrl: post?.avatarUrl || post?.profileImageUrl || post?.user?.avatarUrl,
         }}
         createdAt={post?.createdAt}
         content={post?.content}
         counts={{
           replies: post?.replyCount ?? replies.length,
-          reposts: post?.repostCount ?? post?.counts?.reposts ?? 0,
-          likes: post?.likeCount ?? post?.counts?.likes ?? 0,
+          // repostCount와 likes 필드명 대응
+          reposts: post?.repostCount ?? post?.repostCount ?? 0,
+          likes: post?.likeCount ?? post?.likes ?? 0,
         }}
-        isLiked={post?.isLiked}
-        isReposted={post?.isReposted}
-        isBookmarked={post?.isBookmarked}
+        // 백엔드의 boolean 필드명(liked, reposted, bookmarked)에 대응
+        isLiked={post?.liked ?? post?.isLiked ?? false}
+        isReposted={post?.reposted ?? post?.isReposted ?? false}
+        isBookmarked={post?.bookmarked ?? post?.isBookmarked ?? false}
+
         onLike={handleLike}
         onRepost={handleRepost}
         onBookmark={handleBookmark}
@@ -203,7 +241,7 @@ function TweetDetailPage() {
       />
 
       {/* 답글 입력 */}
-      <ReplyForm onSubmit={() => {}} />
+      <ReplyForm onSubmit={handleReplySubmit} />
 
       {/* 답글 리스트 */}
       <div>

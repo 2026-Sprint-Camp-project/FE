@@ -19,19 +19,18 @@ export const getPostDetail = async (postId) => {
   return response.data;
 };
 
-// 답글 목록 조회 (GET /posts/:postId/replies)
+/** 답글 목록 조회 (GET /posts/:postId/replies)
 export const getReplies = async (postId) => {
   const response = await client.get(`/posts/${postId}/replies`);
   return response.data;
 };
+*/
 
-// 답글 작성 (POST /posts/:postId/replies)
+// 답글 작성 API (일반 게시글 작성과 동일한 URL 사용)
 export const createReply = async (postId, content) => {
   const response = await client.post('/posts', { 
     content: content,
-    // 💡 중요: 백엔드 명세서에 따라 키 이름(parentPostId)이 다를 수 있습니다!
-    // 예: replyTo, originalPostId, parentId 등
-    parentPostId: postId 
+    replyToPostId: Number(postId) // 명세서에 맞게 숫자형으로 부모 ID 전달
   });
   return response.data;
 };
@@ -90,3 +89,5 @@ export const deletePost = async (postId) => {
   const response = await client.delete(`/posts/${postId}`);
   return response.data;
 };
+
+
