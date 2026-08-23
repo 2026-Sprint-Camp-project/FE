@@ -58,6 +58,11 @@ export const unbookmarkPost = async (postId) => {
   return response.data;
 };
 
+export const getBookmarks = async () => {
+  const response = await client.get('/users/me/bookmarks');
+  return response.data;
+};
+
 // 3. 리트윗 / 취소 API
 // 리트윗(리포스트) 요청
 export const rePost = async (postId) => {
@@ -70,10 +75,7 @@ export const unrePost = async (postId) => {
   return response.data;
 };
 
-export const getBookmarks = async () => {
-  const response = await client.get('/users/me/bookmarks');
-  return response.data;
-};
+
 
 // 특정 사용자의 게시글 목록 조회
 export const getUserPosts = async (username) => {
