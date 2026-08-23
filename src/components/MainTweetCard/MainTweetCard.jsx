@@ -110,7 +110,7 @@ function MainTweetCard({
           color: '#536471'
         }}>
           {counts.reposts > 0 && (
-            <div><strong style={{ color: '#0F1419' }}>{counts.reposts}</strong> 리트윗</div>
+            <div><strong style={{ color: '#0F1419' }}>{counts.reposts}</strong> 리포스트</div>
           )}
           {counts.likes > 0 && (
             <div><strong style={{ color: '#0F1419' }}>{counts.likes}</strong> 마음에 들어요</div>
