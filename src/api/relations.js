@@ -48,6 +48,23 @@ export async function getFollowing(idOrUsername, page) {
   });
 }
 
+export async function getAllFollowingIds(idOrUsername) {
+  const ids = new Set();
+  let cursor;
+  while (true) {
+    const data = await getFollowing(
+      idOrUsername,
+      cursor ? { cursor } : undefined,
+    );
+    (data.following ?? []).forEach((u) =>
+      ids.add(Number(u.userId ?? u.user_id)),
+    );
+    if (!data.hasNext || !data.nextCursor) break;
+    cursor = data.nextCursor;
+  }
+  return ids;
+}
+
 /** 게시글 북마크 저장 */
 export function bookmarkPost(postId) {
   return request(`/posts/${postId}/bookmarks`, {
