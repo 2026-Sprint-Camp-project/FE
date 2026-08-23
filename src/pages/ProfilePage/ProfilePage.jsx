@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Avatar from '../../components/Avatar/Avatar';
 import Button from '../../components/Button/Button';
 import FollowButton from '../../components/FollowButton/FollowButton';
 import Tabs from '../../components/Tabs/Tabs';
+import TweetCard from '../../components/TweetCard/TweetCard';
 import * as usersApi from '../../api/users';
 import * as relationsApi from '../../api/relations';
 import * as listsApi from '../../api/lists';
+import * as postsApi from '../../api/posts';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './ProfilePage.module.css';
 
@@ -27,7 +29,11 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
+  const userToggledRef = useRef(false);
   const [activeTab, setActiveTab] = useState('posts');
+
+  const [posts, setPosts] = useState([]);
+  const [isPostsLoading, setIsPostsLoading] = useState(false);
 
   const [lists, setLists] = useState([]);
   const [isListsLoading, setIsListsLoading] = useState(false);
@@ -35,6 +41,7 @@ function ProfilePage() {
 
   const isOwnProfile = currentUser?.username === username;
 
+  // 1. 프로필 정보 로드 (어떤 탭이든 무조건 가장 먼저 실행)
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
@@ -58,7 +65,63 @@ function ProfilePage() {
     };
   }, [username]);
 
-  // '리스트' 탭을 눌렀을 때만 조회한다 (다른 사용자의 리스트도 여기로 조회됨)
+  // 1-1. 팔로우 상태 확인
+  // 백엔드가 단일 유저 조회(GET /users/:id)에는 isFollowing을 안 내려주므로
+  // 내 팔로잉 목록(getAllFollowingIds)과 대조해서 직접 판단!
+  useEffect(() => {
+    if (!profile || isOwnProfile || !currentUser) return;
+    let cancelled = false;
+    // 조회 도중 사용자가 직접 버튼을 눌러버리면(handleFollowToggle) 그 결과가 우선
+    // 뒤늦게 도착한, 클릭 이전 시점 기준의 오래된 목록으로 방금 반영한 상태를 덮어쓰지 않도록 막음.
+    userToggledRef.current = false;
+
+    relationsApi
+      .getAllFollowingIds(currentUser.username)
+      .then((followingIds) => {
+        if (!cancelled && !userToggledRef.current) {
+          setIsFollowing(followingIds.has(Number(profile.userId)));
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile, isOwnProfile, currentUser]);
+
+  // ✨ 2. '게시물' 탭 전용 데이터 로드
+  useEffect(() => {
+    if (activeTab !== 'posts') return undefined;
+    let cancelled = false;
+    setIsPostsLoading(true);
+
+    postsApi
+      .getUserPosts(username)
+      .then((data) => {
+        if (!cancelled) {
+          const extractedPosts = Array.isArray(data)
+            ? data
+            : data?.data || data?.posts || [];
+          const userPosts = extractedPosts.filter((post) => {
+            const postUsername =
+              post.username || post.user?.username || post.author?.username;
+            return postUsername === username;
+          });
+
+          setPosts(userPosts);
+        }
+      })
+      .catch((err) => console.error('게시물 로딩 실패:', err))
+      .finally(() => {
+        if (!cancelled) setIsPostsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, username]);
+
+  // 3. '리스트' 탭 전용 데이터 로드
   useEffect(() => {
     if (activeTab !== 'lists') return undefined;
     let cancelled = false;
@@ -71,7 +134,8 @@ function ProfilePage() {
         if (!cancelled) setLists(data.lists ?? []);
       })
       .catch((err) => {
-        if (!cancelled) setListsError(err.message || '리스트를 불러오지 못했습니다.');
+        if (!cancelled)
+          setListsError(err.message || '리스트를 불러오지 못했습니다.');
       })
       .finally(() => {
         if (!cancelled) setIsListsLoading(false);
@@ -83,7 +147,8 @@ function ProfilePage() {
   }, [activeTab, username]);
 
   const handleFollowToggle = async () => {
-    const targetId = profile.userId;
+    userToggledRef.current = true;
+    const targetId = Number(profile.userId);
     try {
       if (isFollowing) {
         await relationsApi.unfollow(targetId);
@@ -232,8 +297,51 @@ function ProfilePage() {
             </div>
           )}
         </div>
+      ) : activeTab === 'posts' ? (
+        <div className={styles.postsSection}>
+          {isPostsLoading ? (
+            <p
+              className={styles.statusMessage}
+              style={{ textAlign: 'center', padding: '20px' }}
+            >
+              게시물을 불러오는 중…
+            </p>
+          ) : posts.length > 0 ? (
+            posts.map((post) => (
+              <TweetCard
+                key={post.postId || post.id}
+                author={{
+                  name:
+                    post.name || post.authorName || profile?.name || '사용자',
+                  username:
+                    post.username ||
+                    post.user?.username ||
+                    profile?.username ||
+                    'user',
+                  avatarUrl:
+                    post.avatarUrl ||
+                    post.profileImageUrl ||
+                    profile?.profileImageUrl,
+                }}
+                createdAt={post.createdAt}
+                content={post.content}
+                counts={{
+                  replies: post.replyCount ?? 0,
+                  retweets: post.retweetCount ?? 0,
+                  likes: post.likeCount ?? 0,
+                }}
+                isLiked={post.liked ?? post.isLiked ?? false}
+                isRetweeted={post.reposted ?? post.isRetweeted ?? false}
+                isBookmarked={post.bookmarked ?? post.isBookmarked ?? false}
+                onClick={() => navigate(`/posts/${post.postId || post.id}`)}
+              />
+            ))
+          ) : (
+            <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+          )}
+        </div>
       ) : (
-        <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+        <div className={styles.emptyState}>준비 중인 탭입니다.</div>
       )}
     </div>
   );

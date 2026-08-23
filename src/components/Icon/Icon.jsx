@@ -226,6 +226,17 @@ const ICONS = {
       </>
     ),
   },
+  repost: {
+    viewBox: '0 0 18 18',
+    paths: (
+      <>
+        <path d="M12.75 1.5L15.75 4.5L12.75 7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2.25 8.25V7.5C2.25 6.70435 2.56607 5.94129 3.12868 5.37868C3.69129 4.81607 4.45435 4.5 5.25 4.5H15.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5.25 16.5L2.25 13.5L5.25 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M15.75 9.75V10.5C15.75 11.2956 15.4339 12.0587 14.8713 12.6213C14.3087 13.1839 13.5456 13.5 12.75 13.5H2.25" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </>
+    ),
+  },
   heart: {
     viewBox: '0 0 18 18',
     paths: (
