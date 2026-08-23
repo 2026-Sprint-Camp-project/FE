@@ -4,9 +4,11 @@ import Avatar from '../../components/Avatar/Avatar';
 import Button from '../../components/Button/Button';
 import FollowButton from '../../components/FollowButton/FollowButton';
 import Tabs from '../../components/Tabs/Tabs';
+import TweetCard from '../../components/TweetCard/TweetCard';
 import * as usersApi from '../../api/users';
 import * as relationsApi from '../../api/relations';
 import * as listsApi from '../../api/lists';
+import * as postsApi from '../../api/posts';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './ProfilePage.module.css';
 
@@ -29,12 +31,16 @@ function ProfilePage() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState('posts');
 
+  const [posts, setPosts] = useState([]);
+  const [isPostsLoading, setIsPostsLoading] = useState(false);
+
   const [lists, setLists] = useState([]);
   const [isListsLoading, setIsListsLoading] = useState(false);
   const [listsError, setListsError] = useState('');
 
   const isOwnProfile = currentUser?.username === username;
 
+  // 1. 프로필 정보 로드 (어떤 탭이든 무조건 가장 먼저 실행)
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
@@ -46,8 +52,7 @@ function ProfilePage() {
         if (!cancelled) setProfile(data.user);
       })
       .catch((err) => {
-        if (!cancelled)
-          setError(err.message || '프로필을 불러오지 못했습니다.');
+        if (!cancelled) setError(err.message || '프로필을 불러오지 못했습니다.');
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -58,7 +63,38 @@ function ProfilePage() {
     };
   }, [username]);
 
-  // '리스트' 탭을 눌렀을 때만 조회한다 (다른 사용자의 리스트도 여기로 조회됨)
+  // ✨ 2. '게시물' 탭 전용 데이터 로드
+  useEffect(() => {
+    if (activeTab !== 'posts') return undefined;
+    let cancelled = false;
+    setIsPostsLoading(true);
+
+    postsApi
+      .getUserPosts(username)
+      .then((data) => {
+        if (!cancelled) {
+          const extractedPosts = Array.isArray(data) ? data : data?.data || data?.posts || [];
+          
+          // 💡 백엔드에서 준 전체 글 중에서, 작성자 아이디가 프로필 아이디와 같은 것만 걸러냅니다!
+          const userPosts = extractedPosts.filter((post) => {
+            const postUsername = post.username || post.user?.username || post.author?.username;
+            return postUsername === username;
+          });
+
+          setPosts(userPosts);
+        }
+      })
+      .catch((err) => console.error('게시물 로딩 실패:', err))
+      .finally(() => {
+        if (!cancelled) setIsPostsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, username]);
+
+  // 3. '리스트' 탭 전용 데이터 로드
   useEffect(() => {
     if (activeTab !== 'lists') return undefined;
     let cancelled = false;
@@ -232,8 +268,40 @@ function ProfilePage() {
             </div>
           )}
         </div>
+      ) : activeTab === 'posts' ? (
+        <div className={styles.postsSection}>
+          {isPostsLoading ? (
+            <p className={styles.statusMessage} style={{ textAlign: 'center', padding: '20px' }}>
+              게시물을 불러오는 중…
+            </p>
+          ) : posts.length > 0 ? (
+            posts.map((post) => (
+              <TweetCard
+                key={post.postId || post.id}
+                author={{
+                  name: post.name || post.authorName || profile?.name || '사용자',
+                  username: post.username || post.user?.username || profile?.username || 'user',
+                  avatarUrl: post.avatarUrl || post.profileImageUrl || profile?.profileImageUrl,
+                }}
+                createdAt={post.createdAt}
+                content={post.content}
+                counts={{
+                  replies: post.replyCount ?? 0,
+                  retweets: post.retweetCount ?? 0,
+                  likes: post.likeCount ?? 0,
+                }}
+                isLiked={post.liked ?? post.isLiked ?? false}
+                isRetweeted={post.reposted ?? post.isRetweeted ?? false}
+                isBookmarked={post.bookmarked ?? post.isBookmarked ?? false}
+                onClick={() => navigate(`/posts/${post.postId || post.id}`)}
+              />
+            ))
+          ) : (
+            <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+          )}
+        </div>
       ) : (
-        <div className={styles.emptyState}>아직 게시물이 없습니다.</div>
+        <div className={styles.emptyState}>준비 중인 탭입니다.</div>
       )}
     </div>
   );

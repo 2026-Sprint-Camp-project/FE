@@ -1,7 +1,7 @@
 // src/pages/BookmarksPage/BookmarksPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getBookmarks, likePost, unlikePost, retweetPost, unretweetPost, bookmarkPost, unbookmarkPost } from '../../api/posts'; //[cite: 8]
+import { getBookmarks, likePost, unlikePost, rePost, unrePost, bookmarkPost, unbookmarkPost } from '../../api/posts'; //[cite: 8]
 import Layout from '../../components/Layout/Layout'; //[cite: 9]
 import TweetCard from '../../components/TweetCard/TweetCard'; //[cite: 8]
 
@@ -89,12 +89,12 @@ function BookmarksPage() {
             
             // API 명세서를 고려한 안전한 필드 참조[cite: 8]
             const isLiked = post.liked ?? post.isLiked ?? false;
-            const isRetweeted = post.reposted ?? post.isRetweeted ?? false;
+            const isReposted = post.reposted ?? post.isReposted ?? false;
             // 북마크 목록으로 불러온 것이므로 기본적으로 true일 확률이 높음
             const isBookmarked = post.bookmarked ?? post.isBookmarked ?? true; 
             
             const likeCount = post.likeCount ?? post.likes ?? 0;
-            const retweetCount = post.repostCount ?? post.retweetCount ?? post.retweets ?? 0;
+            const repostCount = post.repostCount ?? post.repostCount ?? post.reposts ?? 0;
             const replyCount = post.replyCount ?? post.replies ?? 0;
 
             return (
@@ -109,15 +109,15 @@ function BookmarksPage() {
                 content={post.content}
                 counts={{
                   replies: replyCount,
-                  retweets: retweetCount,
+                  reposts: repostCount,
                   likes: likeCount,
                 }}
                 isLiked={isLiked}
-                isRetweeted={isRetweeted}
+                isReposted={isReposted}
                 isBookmarked={isBookmarked}
                 onClick={() => navigate(`/posts/${postId}`)}
                 onBookmark={() => handleBookmark(postId, isBookmarked)}
-                // 필요시 onLike, onRetweet 핸들러도 HomePage처럼 연결해 줍니다.[cite: 8]
+                // 필요시 onLike, onRepost 핸들러도 HomePage처럼 연결해 줍니다.[cite: 8]
               />
             );
           })

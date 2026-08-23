@@ -27,7 +27,12 @@ export const getReplies = async (postId) => {
 
 // 답글 작성 (POST /posts/:postId/replies)
 export const createReply = async (postId, content) => {
-  const response = await client.post(`/posts/${postId}/replies`, { content });
+  const response = await client.post('/posts', { 
+    content: content,
+    // 💡 중요: 백엔드 명세서에 따라 키 이름(parentPostId)이 다를 수 있습니다!
+    // 예: replyTo, originalPostId, parentId 등
+    parentPostId: postId 
+  });
   return response.data;
 };
 
@@ -54,17 +59,32 @@ export const unbookmarkPost = async (postId) => {
 };
 
 // 3. 리트윗 / 취소 API
-export const retweetPost = async (postId) => {
+// 리트윗(리포스트) 요청
+export const rePost = async (postId) => {
   const response = await client.post(`/posts/${postId}/reposts`);
   return response.data;
 };
 
-export const unretweetPost = async (postId) => {
+export const unrePost = async (postId) => {
   const response = await client.delete(`/posts/${postId}/reposts`);
   return response.data;
 };
 
 export const getBookmarks = async () => {
   const response = await client.get('/users/me/bookmarks');
+  return response.data;
+};
+
+// 특정 사용자의 게시글 목록 조회
+export const getUserPosts = async (username) => {
+  // 클라이언트(client) 변수명은 기존 코드에 맞춰져 있을 것입니다. 
+  // 만약 axios를 직접 쓴다면 axios.get(...) 으로 수정해주세요.
+  const response = await client.get(`/posts?username=${username}`);
+  return response.data;
+};
+
+// 게시글 삭제 API (DELETE /posts/:postId)
+export const deletePost = async (postId) => {
+  const response = await client.delete(`/posts/${postId}`);
   return response.data;
 };
