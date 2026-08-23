@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchPosts, searchUsers } from '../../api/search'; // API 통신 함수 경로 확인
+// src/pages/SearchPage/SearchPage.jsx 상단
+import Icon from '../../components/Icon/Icon'; // 👈 Icon 컴포넌트 추가
 
 import Tabs from '../../components/Tabs/Tabs';
 import TweetCard from '../../components/TweetCard/TweetCard';
@@ -62,17 +64,32 @@ function SearchPage() {
   }, [query, activeTab]);
 
   return (
-    <div>
-      {/* 1. 상단 검색창 영역 */}
-      <div style={{ padding: '12px 16px', borderBottom: '1px solid #EFF3F4', position: 'sticky', top: 0, backgroundColor: 'rgba(255, 255, 255, 0.85)', zIndex: 10 }}>
-        <input
-          type="text"
-          defaultValue={query}
-          onKeyDown={handleSearch}
-          placeholder="검색"
-          style={{ width: '100%', padding: '12px', borderRadius: '9999px', border: 'none', backgroundColor: '#EFF3F4', outline: 'none' }}
-        />
-      </div>
+    <div style={{ padding: '12px 16px', borderBottom: '1px solid #EFF3F4', position: 'sticky', top: 0, backgroundColor: 'rgba(255, 255, 255, 0.85)', zIndex: 10 }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          backgroundColor: '#EFF3F4', 
+          borderRadius: '9999px', 
+          padding: '0 16px' // 좌우 여백을 주어 아이콘이 너무 벽에 붙지 않게 합니다
+        }}>
+          {/* ✨ 돋보기 아이콘 추가 */}
+          <Icon name="search" size={20} color="#536471" />
+          
+          <input
+            type="text"
+            defaultValue={query}
+            onKeyDown={handleSearch}
+            placeholder="검색"
+            style={{ 
+              width: '100%', 
+              padding: '12px 12px 12px 12px', 
+              border: 'none', 
+              backgroundColor: 'transparent', // 배경색을 투명하게 해서 부모 div의 회색이 보이게 합니다
+              outline: 'none',
+              fontSize: '15px'
+            }}
+          />
+        </div>
 
       {/* 2. 분류 탭 */}
       <Tabs
@@ -99,7 +116,7 @@ function SearchPage() {
               const avatarUrl = post.avatarUrl || post.profileImageUrl || post.user?.avatarUrl;
               
               const replyCount = post.replyCount ?? post.replies ?? post.counts?.replies ?? 0;
-              const retweetCount = post.repostCount ?? post.retweetCount ?? post.retweets ?? 0;
+              const repostCount = post.repostCount ?? post.repostCount ?? post.reposts ?? 0;
               const likeCount = post.likeCount ?? post.likes ?? post.counts?.likes ?? 0;
 
               return (
@@ -114,11 +131,11 @@ function SearchPage() {
                   content={post.content}
                   counts={{
                     replies: replyCount,
-                    retweets: retweetCount,
+                    reposts: repostCount,
                     likes: likeCount,
                   }}
                   isLiked={post.liked ?? post.isLiked ?? false}
-                  isRetweeted={post.reposted ?? post.isRetweeted ?? false}
+                  isReposted={post.reposted ?? post.isReposted ?? false}
                   isBookmarked={post.bookmarked ?? post.isBookmarked ?? false}
                   onClick={() => navigate(`/posts/${postId}`)}
                 />

@@ -73,3 +73,15 @@
 .compactInput::placeholder {
   color: var(--text-secondary);
 }
+
+.composeContainer { /* ComposeBox 최상위 클래스명으로 변경 */
+  width: 100%;
+  box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+}
+
+/* 내부 textarea 역시 너비를 넘지 않도록 제한 */
+.composeContainer textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+}

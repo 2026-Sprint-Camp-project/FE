@@ -12,7 +12,7 @@ function NotificationsPage() {
       try {
         setLoading(true);
         const data = await getNotifications();
-        
+
         // API 명세서에 맞춰 data.notifications 배열 추출
         if (data && Array.isArray(data.notifications)) {
           setNotifications(data.notifications);
@@ -37,8 +37,8 @@ function NotificationsPage() {
         return `${senderName}님이 회원님의 게시물을 좋아합니다.`;
       case 'FOLLOW':
         return `${senderName}님이 회원님을 팔로우하기 시작했습니다.`;
-      case 'RETWEET':
-        return `${senderName}님이 회원님의 게시물을 리트윗했습니다.`;
+      case 'REPOST':
+        return `${senderName}님이 회원님의 게시물을 리포스트했습니다.`;
       case 'REPLY':
         return `${senderName}님이 회원님의 게시물에 답글을 남겼습니다.`;
       default:
@@ -48,7 +48,7 @@ function NotificationsPage() {
 
   return (
     <div style={{ borderLeft: '1px solid #EFF3F4', borderRight: '1px solid #EFF3F4', minHeight: '100vh' }}>
-      
+
       {/* 1. 상단 알림 헤더 */}
       <div style={{
         position: 'sticky', top: 0, backgroundColor: 'rgba(255, 255, 255, 0.85)',
@@ -64,9 +64,14 @@ function NotificationsPage() {
         ) : notifications.length > 0 ? (
           notifications.map((noti) => (
             <NotificationItem
-              key={noti.notificationId} // 명세서의 고유 ID 매핑
-              text={getNotificationMessage(noti.notificationType, noti.sender.name)} // 텍스트 조합
-              time={noti.createdAt} // 명세서의 생성 시간 매핑
+              key={noti.notificationId}
+              // 🚨 NotificationItem에 정의된 정확한 이름으로 변경
+              message={getNotificationMessage(noti.notificationType, noti.sender?.name || '사용자')}
+              timestamp={noti.createdAt}
+
+              // 아바타 이미지와 이름도 함께 전달 (선택 사항)
+              avatarUrl={noti.sender?.profileImageUrl}
+              name={noti.sender?.name || '사용자'}
             />
           ))
         ) : (

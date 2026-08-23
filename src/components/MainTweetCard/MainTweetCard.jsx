@@ -1,6 +1,7 @@
 // src/components/MainTweetCard/MainTweetCard.jsx
 import React from 'react';
 import Avatar from '../Avatar/Avatar';
+import { useNavigate } from 'react-router-dom';
 import Icon from '../Icon/Icon';
 
 function MainTweetCard({
@@ -9,25 +10,43 @@ function MainTweetCard({
   content,
   counts = {},
   isLiked = false,
-  isRetweeted = false,
+  isReposted = false,
   isBookmarked = false,
   onReply,
-  onRetweet,
+  onRepost,
   onLike,
   onBookmark,
   onShare,
   onMoreClick,
+  onDelete,
 }) {
+  const navigate = useNavigate(); // 👈 추가
+
+  // 👈 프로필 클릭 핸들러 추가
+  const handleProfileClick = (event) => {
+    event.stopPropagation();
+    if (author?.username) {
+      navigate(`/${author.username}`);
+    }
+  };
+
   return (
     <div style={{ padding: '16px', borderBottom: '1px solid #EFF3F4', backgroundColor: '#ffffff' }}>
       
-      {/* 1. 작성자 정보 */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      {/* ✨ 상단 프로필 및 우측 삭제 버튼 영역 */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', /* 좌우 양 끝으로 밀어내기 */
+        alignItems: 'flex-start', 
+        marginBottom: '16px' 
+      }}>
+        
+        {/* 1. 좌측: 프로필 이미지 및 사용자 이름/아이디 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <Avatar src={author.avatarUrl} name={author.name} size={48} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#0F1419' }}>
-              {author.name || '김개발'}
+              {author.name || '사용자'}
             </span>
             <span style={{ fontSize: '14px', color: '#536471' }}>
               @{author.username || 'user'}
@@ -35,12 +54,21 @@ function MainTweetCard({
           </div>
         </div>
         
-        {onMoreClick && (
+        {/* 2. 우측: 삭제 버튼 (이름 맨 우측에 배치) */}
+        {onDelete && (
           <button 
-            onClick={onMoreClick}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#536471' }}
+            onClick={onDelete}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer', 
+              color: '#F91880', // 삭제를 의미하는 빨간(핑크)색
+              fontSize: '15px',
+              fontWeight: 'bold',
+              padding: '4px 8px' // 클릭하기 편하게 약간의 패딩 추가
+            }}
           >
-            <Icon name="more" size={20} />
+            삭제
           </button>
         )}
       </div>
@@ -63,7 +91,7 @@ function MainTweetCard({
       </div>
 
       {/* 4. 중단 통계 바 (리트윗 / 마음에 들어요 총 수) */}
-      {(counts.retweets > 0 || counts.likes > 0) && (
+      {(counts.reposts > 0 || counts.likes > 0) && (
         <div style={{
           display: 'flex',
           gap: '20px',
@@ -72,8 +100,8 @@ function MainTweetCard({
           fontSize: '15px',
           color: '#536471'
         }}>
-          {counts.retweets > 0 && (
-            <div><strong style={{ color: '#0F1419' }}>{counts.retweets}</strong> 리트윗</div>
+          {counts.reposts > 0 && (
+            <div><strong style={{ color: '#0F1419' }}>{counts.reposts}</strong> 리트윗</div>
           )}
           {counts.likes > 0 && (
             <div><strong style={{ color: '#0F1419' }}>{counts.likes}</strong> 마음에 들어요</div>
@@ -92,15 +120,15 @@ function MainTweetCard({
           </span>
         </button>
 
-        {/* 리트윗 아이콘 + 숫자 */}
+        {/* 리포스트 아이콘 + 숫자 */}
         <button 
           type="button" 
           style={actionBtnStyle} 
-          onClick={onRetweet}
+          onClick={onRepost}
         >
-          <Icon name="retweet" size={20} color={isRetweeted ? '#00BA7C' : '#536471'} />
-          <span style={{ fontSize: '13px', color: isRetweeted ? '#00BA7C' : '#536471' }}>
-            {counts.retweets ?? 0}
+          <Icon name="repost" size={20} color={isReposted ? '#00BA7C' : '#536471'} />
+          <span style={{ fontSize: '13px', color: isReposted ? '#00BA7C' : '#536471' }}>
+            {counts.reposts ?? counts.retweets ?? 0}
           </span>
         </button>
 

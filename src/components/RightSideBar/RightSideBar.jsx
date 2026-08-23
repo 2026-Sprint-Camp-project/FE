@@ -44,7 +44,7 @@ function RightSidebar() {
         </h3>
         <div style={{ margin: '12px 0' }}>
           <p style={{ fontSize: '12px', color: '#536471' }}>대한민국에서 트렌드 중</p>
-          <p style={{ fontWeight: 'bold' }}>#스프링캠프</p>
+          <p style={{ fontWeight: 'bold' }}>#스프린트캠프</p>
           <p style={{ fontSize: '12px', color: '#536471' }}>1,234 게시물</p>
         </div>
         <div style={{ margin: '12px 0' }}>
