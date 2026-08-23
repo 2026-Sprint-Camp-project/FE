@@ -8,8 +8,9 @@ import {
   unlikePost, 
   bookmarkPost, 
   unbookmarkPost, 
-  retweetPost, 
-  unretweetPost 
+  rePost, 
+  unrePost,
+  deletePost 
 } from '../../api/posts';
 
 import MainTweetCard from '../../components/MainTweetCard/MainTweetCard';
@@ -23,6 +24,20 @@ function TweetDetailPage() {
   const [post, setPost] = useState(null);
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleDelete = async () => {
+    if (!window.confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
+
+    try {
+      await deletePost(postId);
+      alert('게시글이 삭제되었습니다.');
+      // 삭제 성공 시 홈 피드로 이동 (뒤로 가기 방지)
+      navigate('/', { replace: true }); 
+    } catch (err) {
+      console.error('게시글 삭제 실패:', err);
+      alert('게시글 삭제에 실패했습니다. (작성자 본인만 가능)');
+    }
+  };
 
   // 트윗 상세 불러오기
   useEffect(() => {
@@ -79,31 +94,31 @@ function TweetDetailPage() {
     }
   };
 
-  // 🔁 리트윗 클릭 핸들러
-  const handleRetweet = async () => {
+  // 🔁 리포스트 클릭 핸들러
+  const handleRepost = async () => {
     if (!post) return;
 
     const prevPost = { ...post };
-    const nextIsRetweeted = !post.isRetweeted;
-    const nextRetweetCount = nextIsRetweeted 
-      ? (post.retweetCount || post.counts?.retweets || 0) + 1 
-      : Math.max(0, (post.retweetCount || post.counts?.retweets || 0) - 1);
+    const nextIsReposted = !post.isReposted;
+    const nextRepostCount = nextIsReposted 
+      ? (post.repostCount || post.counts?.reposts || 0) + 1 
+      : Math.max(0, (post.repostCount || post.counts?.reposts || 0) - 1);
 
     setPost({
       ...post,
-      isRetweeted: nextIsRetweeted,
-      retweetCount: nextRetweetCount,
-      counts: { ...post.counts, retweets: nextRetweetCount },
+      isReposted: nextIsReposted,
+      repostCount: nextRepostCount,
+      counts: { ...post.counts, reposts: nextRepostCount },
     });
 
     try {
-      if (nextIsRetweeted) {
-        await retweetPost(postId);
+      if (nextIsReposted) {
+        await rePost(postId);
       } else {
-        await unretweetPost(postId);
+        await unrePost(postId);
       }
     } catch (err) {
-      console.error('리트윗 처리 실패:', err);
+      console.error('리포스트 처리 실패:', err);
       setPost(prevPost);
     }
   };
@@ -167,16 +182,17 @@ function TweetDetailPage() {
         content={post?.content}
         counts={{
           replies: post?.replyCount ?? replies.length,
-          retweets: post?.retweetCount ?? post?.counts?.retweets ?? 0,
+          reposts: post?.repostCount ?? post?.counts?.reposts ?? 0,
           likes: post?.likeCount ?? post?.counts?.likes ?? 0,
         }}
         isLiked={post?.isLiked}
-        isRetweeted={post?.isRetweeted}
+        isReposted={post?.isReposted}
         isBookmarked={post?.isBookmarked}
         onLike={handleLike}
-        onRetweet={handleRetweet}
+        onRepost={handleRepost}
         onBookmark={handleBookmark}
         onShare={handleShare}
+        onDelete={handleDelete}
       />
 
       {/* 답글 입력 */}
@@ -197,7 +213,7 @@ function TweetDetailPage() {
               content={reply.content}
               counts={{
                 replies: reply.replyCount || 0,
-                retweets: reply.retweetCount || 0,
+                reposts: reply.repostCount || 0,
                 likes: reply.likeCount || 0,
               }}
             />

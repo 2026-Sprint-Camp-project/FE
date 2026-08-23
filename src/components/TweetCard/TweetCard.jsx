@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Avatar from '../Avatar/Avatar';
 import Icon from '../Icon/Icon';
 import styles from './TweetCard.module.css';
@@ -11,12 +12,12 @@ import styles from './TweetCard.module.css';
  *   author: { name: string, username: string, avatarUrl?: string | null },
  *   createdAt: string,
  *   content: string,
- *   counts?: { replies?: number, retweets?: number, likes?: number },
+ *   counts?: { replies?: number, reposts?: number, likes?: number },
  *   isLiked?: boolean,
- *   isRetweeted?: boolean,
+ *   isReposted?: boolean,
  *   isBookmarked?: boolean,
  *   onReply?: () => void,
- *   onRetweet?: () => void,
+ *   onRepost?: () => void,
  *   onLike?: () => void,
  *   onBookmark?: () => void,
  *   onShare?: () => void,
@@ -30,10 +31,10 @@ function TweetCard({
   content,
   counts = {},
   isLiked = false,
-  isRetweeted = false,
+  isReposted = false,
   isBookmarked = false,
   onReply,
-  onRetweet,
+  onRepost,
   onLike,
   onBookmark,
   onShare,
@@ -41,6 +42,14 @@ function TweetCard({
   onClick,
 }) {
   const isClickable = typeof onClick === 'function';
+  const navigate = useNavigate();
+
+  const handleProfileClick = (event) => {
+    event.stopPropagation(); // 카드 전체 클릭(상세페이지 이동) 이벤트 방지
+    if (author?.username) {
+      navigate(`/${author.username}`); // 유저 프로필 경로로 이동
+    }
+  };
 
   return (
     <div
@@ -48,10 +57,14 @@ function TweetCard({
       onClick={onClick}
       style={{ cursor: 'pointer' }}
     >
-      <Avatar src={author.avatarUrl} name={author.name} size={50} />
+      <div onClick={handleProfileClick} style={{ cursor: 'pointer', zIndex: 2 }}>
+        <Avatar src={author.avatarUrl} name={author.name} size={50} />
+      </div>
+
+
       <div className={styles.content}>
         <div className={styles.header}>
-          <div className={styles.byline}>
+          <div className={styles.byline} onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
             <p className={styles.name}>{author.name}</p>
             <p className={styles.meta}>
               @{author.username} · {createdAt}
@@ -88,14 +101,16 @@ function TweetCard({
           </button>
           <button
             type="button"
-            className={isRetweeted ? `${styles.action} ${styles.retweeted}` : styles.action}
+            className={isReposted ? `${styles.action} ${styles.reposted}` : styles.action}
             onClick={(event) => {
               event.stopPropagation();
-              onRetweet?.();
+              onRepost?.();
             }}
           >
-            <Icon name="retweet" size={18} />
-            {typeof counts.retweets === 'number' && <span>{counts.retweets}</span>}
+            <Icon name="repost" size={18} />
+            {typeof (counts.reposts ?? counts.retweets) === 'number' && (
+              <span>{counts.reposts ?? counts.retweets}</span>
+            )}
           </button>
           <button
             type="button"
