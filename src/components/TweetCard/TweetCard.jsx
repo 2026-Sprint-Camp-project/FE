@@ -53,21 +53,19 @@ function TweetCard({
 
   return (
     <div
-      className={isClickable ? `${styles.card} ${styles.clickable}` : styles.card}
+      className={`${styles.card} ${isClickable ? styles.clickable : ''}`}
       onClick={onClick}
-      style={{ cursor: 'pointer' }}
     >
-      <div onClick={handleProfileClick} style={{ cursor: 'pointer', zIndex: 2 }}>
-        <Avatar src={author.avatarUrl} name={author.name} size={50} /> 
+      <div onClick={handleProfileClick} className={styles.avatarWrapper}>
+        <Avatar src={author.avatarUrl} name={author.name} size={50} />
       </div>
 
-    
       <div className={styles.content}>
         <div className={styles.header}>
-          <div className={styles.byline} onClick={handleProfileClick} style={{ cursor: 'pointer' }}> 
-            <p className={styles.name}>{author.name}</p> 
-            <p className={styles.meta}> 
-              @{author.username} · {createdAt} 
+          <div className={styles.byline} onClick={handleProfileClick}>
+            <p className={styles.name}>{author.name}</p>
+            <p className={styles.meta}>
+              @{author.username} · {createdAt}
             </p>
           </div>
           {onMoreClick && (
@@ -109,8 +107,8 @@ function TweetCard({
           >
             <Icon name="repost" size={18} />
             {typeof (counts.reposts ?? counts.retweets) === 'number' && (
-    <span>{counts.reposts ?? counts.retweets}</span>
-  )}
+              <span>{counts.reposts ?? counts.retweets}</span>
+            )}
           </button>
           <button
             type="button"

@@ -48,6 +48,17 @@ export async function getFollowing(idOrUsername, page) {
   });
 }
 
+/** 게시글 좋아요/취소 API */
+export const likePost = async (postId) => {
+  const response = await client.post(`/posts/${postId}/likes`);
+  return response.data;
+};
+
+export const unlikePost = async (postId) => {
+  const response = await client.delete(`/posts/${postId}/likes`);
+  return response.data;
+};
+
 /** 게시글 북마크 저장 */
 export function bookmarkPost(postId) {
   return request(`/posts/${postId}/bookmarks`, {
