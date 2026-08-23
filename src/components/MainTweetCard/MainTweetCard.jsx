@@ -20,9 +20,9 @@ function MainTweetCard({
   onMoreClick,
   onDelete,
 }) {
-  const navigate = useNavigate(); // 👈 추가
+  const navigate = useNavigate();
 
-  // 👈 프로필 클릭 핸들러 추가
+  // 프로필 클릭 핸들러
   const handleProfileClick = (event) => {
     event.stopPropagation();
     if (author?.username) {
@@ -33,16 +33,25 @@ function MainTweetCard({
   return (
     <div style={{ padding: '16px', borderBottom: '1px solid #EFF3F4', backgroundColor: '#ffffff' }}>
       
-      {/* ✨ 상단 프로필 및 우측 삭제 버튼 영역 */}
+      {/* 상단 프로필 및 우측 삭제 버튼 영역 */}
       <div style={{ 
         display: 'flex', 
-        justifyContent: 'space-between', /* 좌우 양 끝으로 밀어내기 */
+        justifyContent: 'space-between',
         alignItems: 'flex-start', 
         marginBottom: '16px' 
       }}>
         
-        {/* 1. 좌측: 프로필 이미지 및 사용자 이름/아이디 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* 1. 좌측: 프로필 이미지 및 사용자 이름/아이디 (클릭 시 이동) */}
+        <div 
+          onClick={handleProfileClick}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '12px', 
+            cursor: 'pointer',
+            width: 'fit-content'
+          }}
+        >
           <Avatar src={author.avatarUrl} name={author.name} size={48} />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#0F1419' }}>
@@ -54,7 +63,7 @@ function MainTweetCard({
           </div>
         </div>
         
-        {/* 2. 우측: 삭제 버튼 (이름 맨 우측에 배치) */}
+        {/* 2. 우측: 삭제 버튼 */}
         {onDelete && (
           <button 
             onClick={onDelete}
@@ -62,10 +71,10 @@ function MainTweetCard({
               background: 'none', 
               border: 'none', 
               cursor: 'pointer', 
-              color: '#F91880', // 삭제를 의미하는 빨간(핑크)색
+              color: '#F91880',
               fontSize: '15px',
               fontWeight: 'bold',
-              padding: '4px 8px' // 클릭하기 편하게 약간의 패딩 추가
+              padding: '4px 8px'
             }}
           >
             삭제
@@ -109,7 +118,7 @@ function MainTweetCard({
         </div>
       )}
 
-      {/* 5. ✨ 하단 아이콘 + 숫자 표시 버튼 바 */}
+      {/* 5. 하단 아이콘 + 숫자 표시 버튼 바 */}
       <div style={{ display: 'flex', justifyContent: 'space-around', paddingTop: '12px' }}>
         
         {/* 답글 아이콘 + 숫자 */}
@@ -160,14 +169,13 @@ function MainTweetCard({
   );
 }
 
-// 아이콘과 숫자가 가로로 정렬되도록 정돈된 버튼 스타일
 const actionBtnStyle = {
   background: 'none',
   border: 'none',
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
-  gap: '6px', // 아이콘과 숫자 사이 간격
+  gap: '6px',
   padding: '8px 12px',
   borderRadius: '20px',
   transition: 'background-color 0.2s',

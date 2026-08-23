@@ -25,6 +25,13 @@ function TweetDetailPage() {
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const handleProfileClick = (e) => {
+    e.stopPropagation(); // 카드 전체 클릭 이벤트와의 충돌 방지
+    if (author?.username) {
+      navigate(`/profile/${author.username}`); // 라우터 설정에 맞춰 경로 조정 (예: /profile/test 또는 /@test)
+    }
+  };
+
   const handleDelete = async () => {
     if (!window.confirm('정말 이 게시글을 삭제하시겠습니까?')) return;
 
