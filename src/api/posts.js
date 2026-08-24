@@ -103,6 +103,11 @@ export const getPostReposts = async (postId) => {
   return response.data;
 };
 
-
+// 게시글 수정 API (PATCH /posts/:postId)
+export const updatePost = async (postId, content) => {
+  // api.patch 대신 client.patch 사용
+  const response = await client.patch(`/posts/${postId}`, { content });
+  return response.data;
+};
 
 

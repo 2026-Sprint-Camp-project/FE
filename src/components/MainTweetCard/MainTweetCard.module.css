@@ -34,13 +34,38 @@
   color: #536471;
 }
 
-.deleteButton {
-  border: none;
+.actionGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.editButton {
   background: none;
+  border: none;
+  color: #1d9bf0;
   font-size: 14px;
   font-weight: bold;
-  color: #f91880;
   cursor: pointer;
+  padding: 0;
+}
+
+.editButton:hover {
+  text-decoration: underline;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: #f4212e;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+}
+
+.deleteButton:hover {
+  text-decoration: underline;
 }
 
 /* 2. 트윗 본문 */
