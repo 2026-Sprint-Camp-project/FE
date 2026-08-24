@@ -24,6 +24,7 @@ function MainTweetCard({
   onLike,
   onBookmark,
   onShare,
+  onEdit,
   onDelete,
   onProfileClick,
   onUserClick,
@@ -51,12 +52,20 @@ function MainTweetCard({
             </span>
           </div>
         </div>
-
+        
+        <div className={styles.actionGroup}>
+          {onEdit && (
+            <button className={styles.editButton} onClick={onEdit}>
+              수정
+            </button>
+          )}
         {onDelete && (
           <button type="button" onClick={onDelete} className={styles.deleteButton}>
             삭제
           </button>
         )}
+        </div>
+        
       </div>
 
       {/* 2. 트윗 본문 */}
@@ -69,7 +78,7 @@ function MainTweetCard({
       {(repostCount > 0 || counts.likes > 0) && (
         <div className={styles.stats}>
           {repostCount > 0 && (
-            <div 
+            <div
               onClick={() => navigate(`/posts/${postId}/engagements?tab=reposts`)}
               style={{ cursor: 'pointer' }}
             >
@@ -77,7 +86,7 @@ function MainTweetCard({
             </div>
           )}
           {counts.likes > 0 && (
-            <div 
+            <div
               onClick={() => navigate(`/posts/${postId}/engagements?tab=likes`)}
               style={{ cursor: 'pointer' }}
             >

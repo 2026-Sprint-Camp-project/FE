@@ -11,12 +11,15 @@ import {
   unbookmarkPost,
   rePost,
   unrePost,
-  deletePost
+  deletePost,
+  updatePost
 } from '../../api/posts';
 
 import MainTweetCard from '../../components/MainTweetCard/MainTweetCard';
 import TweetCard from '../../components/TweetCard/TweetCard';
 import ReplyForm from '../../components/ReplyForm/ReplyForm';
+import Modal from '../../components/Modal/Modal';
+import ComposeBox from '../../components/ComposeBox/ComposeBox';
 
 function TweetDetailPage() {
   const { postId } = useParams();
@@ -25,6 +28,10 @@ function TweetDetailPage() {
   const [post, setPost] = useState(null);
   const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editContent, setEditContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 1. 데이터 불러오기 (상세 게시글 + 답글 프론트엔드 필터링)
   useEffect(() => {
@@ -208,6 +215,48 @@ function TweetDetailPage() {
     }
   };
 
+  // --- 게시글 수정 관련 핸들러 (Layout.jsx와 동일 방식) ---
+  const handleOpenEdit = () => {
+    setEditContent(post?.content || '');
+    setIsEditOpen(true);
+  };
+
+  const handleCloseEdit = () => {
+    setIsEditOpen(false);
+    setEditContent('');
+  };
+
+  const handleEditChange = (eOrValue) => {
+    const text = typeof eOrValue === 'string' ? eOrValue : eOrValue?.target?.value;
+    setEditContent(text ?? '');
+  };
+
+  const handleEditSubmit = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!editContent.trim() || isSubmitting) return;
+
+    try {
+      setIsSubmitting(true);
+
+      // 수정 API 호출
+      await updatePost(postId, editContent);
+
+      // UI 상의 게시글 내용 업데이트
+      setPost(prev => ({
+        ...prev,
+        content: editContent
+      }));
+
+      handleCloseEdit();
+      alert('게시글이 수정되었습니다.');
+    } catch (error) {
+      console.error('게시글 수정 실패:', error);
+      alert('게시글 수정에 실패했습니다. (작성자 본인만 가능)');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (loading) return <div style={{ padding: '20px' }}>로딩 중...</div>;
   if (!post) return <div style={{ padding: '20px' }}>게시글을 찾을 수 없습니다.</div>;
 
@@ -252,6 +301,7 @@ function TweetDetailPage() {
         onRetweet={handleRepost}
         onBookmark={handleBookmark}
         onShare={handleShare}
+        onEdit={handleOpenEdit}
         onDelete={handleDelete}
         onProfileClick={(e) => handleUserClick(e, mainAuthorUsername)}
         onUserClick={(e) => handleUserClick(e, mainAuthorUsername)}
@@ -294,6 +344,19 @@ function TweetDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Layout과 동일한 방식의 게시글 수정 모달 */}
+      {isEditOpen && (
+        <Modal onClose={handleCloseEdit}>
+          <ComposeBox
+            value={editContent}
+            onChange={handleEditChange}
+            onSubmit={handleEditSubmit}
+            variant="default"
+            submitLabel={isSubmitting ? '수정 중...' : '수정하기'}
+          />
+        </Modal>
+      )}
 
     </div>
   );
