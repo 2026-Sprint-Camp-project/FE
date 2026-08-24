@@ -24,7 +24,7 @@ function SearchBar({ value, onChange, onSubmit, placeholder = '검색어를 입�
       onSubmit={handleSubmit}
       className={className ? `${styles.searchBar} ${className}` : styles.searchBar}
     >
-      <Icon name="search" size={18} className={styles.icon} />
+      <Icon name="search" size={18} color="var(--text-secondary)" />
       <input
         type="text"
         value={value}
