@@ -1,5 +1,6 @@
 // src/components/ReplyForm/ReplyForm.jsx
 import React, { useState } from 'react';
+import Icon from '../Icon/Icon';
 
 function ReplyForm({ onSubmit, currentUserAvatar }) {
   const [content, setContent] = useState('');
@@ -20,11 +21,18 @@ function ReplyForm({ onSubmit, currentUserAvatar }) {
       alignItems: 'flex-start'
     }}>
       {/* 사용자 아바타 */}
-      <img
-        src={currentUserAvatar || 'https://via.placeholder.com/40'}
-        alt="my profile"
-        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
-      />
+      <div style={{ 
+        width: '50px', 
+        height: '50px', 
+        borderRadius: '50%', 
+        backgroundColor: '#F7F9F9', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        flexShrink: 0
+      }}>
+        <Icon name="user" size={30} color="#536471" />
+      </div>
       
       {/* 입력 폼 */}
       <form onSubmit={handleSubmit} style={{ flex: 1 }}>
