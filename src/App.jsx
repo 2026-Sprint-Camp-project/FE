@@ -16,6 +16,7 @@ import { useAuth } from './hooks/useAuth';
 import TweetDetailPage from './pages/TweetDetailPage/TweetDetailPage';
 import NotificationsPage from './pages/NotificationsPage/NotificationsPage';
 import BookmarksPage from './pages/BookmarksPage/BookmarksPage';
+import PostActivityPage from './pages/PostActivityPage/PostActivityPage';
 
 function AppLayout() {
   const { currentUser } = useAuth();
@@ -55,6 +56,7 @@ function App() {
             <Route path="/:username" element={<ProfilePage />} />
             <Route path="/:username/followers" element={<FollowersPage />} />
             <Route path="/:username/following" element={<FollowingPage />} />
+            <Route path="/posts/:postId/engagements" element={<PostActivityPage />} />
           </Route>
         </Route>
       </Routes>
