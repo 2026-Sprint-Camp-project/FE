@@ -230,6 +230,7 @@ function TweetDetailPage() {
 
       {/* 메인 게시글 카드 */}
       <MainTweetCard
+        postId={post.postId || post.id}
         author={{
           name: post?.name || post?.authorName || post?.user?.name || '사용자',
           username: mainAuthorUsername || 'user',

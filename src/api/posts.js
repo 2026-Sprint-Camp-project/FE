@@ -91,3 +91,18 @@ export const deletePost = async (postId) => {
 };
 
 
+// 1. 좋아요 사용자 목록 조회 (size 파라미터 추가)
+export const getPostLikes = async (postId) => {
+  const response = await client.get(`/posts/${postId}/likes?size=20`);
+  return response.data;
+};
+
+// 2. 리포스트 사용자 목록 조회 (size 파라미터 추가)
+export const getPostReposts = async (postId) => {
+  const response = await client.get(`/posts/${postId}/reposts?size=20`);
+  return response.data;
+};
+
+
+
+

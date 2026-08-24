@@ -2,11 +2,13 @@ import React from 'react';
 import Avatar from '../Avatar/Avatar';
 import Icon from '../Icon/Icon';
 import styles from './MainTweetCard.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function MainTweetCard({
   author = {},
   createdAt,
   content,
+  postId,
   counts = {},
   // API 속성명(liked, reposted 등)과 Prop명(isLiked 등) 둘 다 지원하도록 수정
   liked,
@@ -30,6 +32,7 @@ function MainTweetCard({
   const handleRepost = onRepost || onRetweet;
   const isRepostActive = isReposted || isRetweeted;
   const handleProfileClick = onProfileClick || onUserClick;
+  const navigate = useNavigate();
 
   return (
     <div className={styles.card}>
@@ -66,12 +69,18 @@ function MainTweetCard({
       {(repostCount > 0 || counts.likes > 0) && (
         <div className={styles.stats}>
           {repostCount > 0 && (
-            <div>
+            <div 
+              onClick={() => navigate(`/posts/${postId}/engagements?tab=reposts`)}
+              style={{ cursor: 'pointer' }}
+            >
               <strong className={styles.statNumber}>{repostCount}</strong> 리포스트
             </div>
           )}
           {counts.likes > 0 && (
-            <div>
+            <div 
+              onClick={() => navigate(`/posts/${postId}/engagements?tab=likes`)}
+              style={{ cursor: 'pointer' }}
+            >
               <strong className={styles.statNumber}>{counts.likes}</strong> 마음에 들어요
             </div>
           )}

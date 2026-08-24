@@ -1,9 +1,17 @@
 // src/pages/BookmarksPage/BookmarksPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getBookmarks, likePost, unlikePost, rePost, unrePost, bookmarkPost, unbookmarkPost } from '../../api/posts'; //[cite: 8]
-import Layout from '../../components/Layout/Layout'; //[cite: 9]
-import TweetCard from '../../components/TweetCard/TweetCard'; //[cite: 8]
+import { 
+  getBookmarks, 
+  likePost, 
+  unlikePost, 
+  rePost, 
+  unrePost, 
+  bookmarkPost, 
+  unbookmarkPost 
+} from '../../api/posts';
+import Layout from '../../components/Layout/Layout';
+import TweetCard from '../../components/TweetCard/TweetCard';
 
 function BookmarksPage() {
   const navigate = useNavigate();
@@ -16,7 +24,6 @@ function BookmarksPage() {
       setLoading(true);
       const response = await getBookmarks();
       
-      // 안전한 배열 데이터 추출 로직[cite: 7, 8]
       if (Array.isArray(response)) {
         setBookmarks(response);
       } else if (response && Array.isArray(response.data)) {
@@ -38,10 +45,76 @@ function BookmarksPage() {
     fetchBookmarks();
   }, []);
 
-  // 북마크 해제 (낙관적 업데이트)[cite: 5, 8]
+  // 좋아요 처리 (낙관적 업데이트)
+  const handleLike = async (postId, currentIsLiked) => {
+    const nextIsLiked = !currentIsLiked;
+
+    setBookmarks((prev) =>
+      prev.map((post) => {
+        const id = post.postId || post.id;
+        if (id === postId) {
+          const currentCount = post.likeCount ?? post.likes ?? 0;
+          const nextCount = nextIsLiked ? currentCount + 1 : Math.max(0, currentCount - 1);
+          return {
+            ...post,
+            isLiked: nextIsLiked,
+            liked: nextIsLiked,
+            likeCount: nextCount,
+            likes: nextCount,
+          };
+        }
+        return post;
+      })
+    );
+
+    try {
+      if (nextIsLiked) {
+        await likePost(postId);
+      } else {
+        await unlikePost(postId);
+      }
+    } catch (err) {
+      console.error('좋아요 처리 실패:', err);
+      fetchBookmarks();
+    }
+  };
+
+  // 리포스트 처리 (낙관적 업데이트)
+  const handleRepost = async (postId, currentIsReposted) => {
+    const nextIsReposted = !currentIsReposted;
+
+    setBookmarks((prev) =>
+      prev.map((post) => {
+        const id = post.postId || post.id;
+        if (id === postId) {
+          const currentCount = post.repostCount ?? post.reposts ?? 0;
+          const nextCount = nextIsReposted ? currentCount + 1 : Math.max(0, currentCount - 1);
+          return {
+            ...post,
+            isReposted: nextIsReposted,
+            reposted: nextIsReposted,
+            repostCount: nextCount,
+            reposts: nextCount,
+          };
+        }
+        return post;
+      })
+    );
+
+    try {
+      if (nextIsReposted) {
+        await rePost(postId);
+      } else {
+        await unrePost(postId);
+      }
+    } catch (err) {
+      console.error('리포스트 처리 실패:', err);
+      fetchBookmarks();
+    }
+  };
+
+  // 북마크 해제 (낙관적 업데이트)
   const handleBookmark = async (postId, currentIsBookmarked) => {
-    // 북마크 페이지이므로 북마크 취소 시 목록에서 바로 숨기는 UI 처리도 가능합니다.
-    // 여기서는 기존 상태값만 뒤집도록 처리합니다.
     const nextIsBookmarked = !currentIsBookmarked;
 
     setBookmarks((prev) =>
@@ -56,13 +129,13 @@ function BookmarksPage() {
 
     try {
       if (nextIsBookmarked) {
-        await bookmarkPost(postId); //[cite: 8]
+        await bookmarkPost(postId);
       } else {
-        await unbookmarkPost(postId); //[cite: 8]
+        await unbookmarkPost(postId);
       }
     } catch (err) {
       console.error('북마크 처리 실패:', err);
-      fetchBookmarks(); // 에러 시 원래 상태로 원복[cite: 8]
+      fetchBookmarks();
     }
   };
 
@@ -75,7 +148,7 @@ function BookmarksPage() {
       }}>
         <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>북마크</h2>
         <div style={{ fontSize: '13px', color: '#536471', marginTop: '2px' }}>
-          @{/* 유저네임이 필요하다면 user 객체에서 가져올 수 있습니다 */}내 북마크
+          내 북마크
         </div>
       </div>
 
@@ -87,14 +160,12 @@ function BookmarksPage() {
           bookmarks.map((post) => {
             const postId = post.postId || post.id;
             
-            // API 명세서를 고려한 안전한 필드 참조[cite: 8]
             const isLiked = post.liked ?? post.isLiked ?? false;
             const isReposted = post.reposted ?? post.isReposted ?? false;
-            // 북마크 목록으로 불러온 것이므로 기본적으로 true일 확률이 높음
             const isBookmarked = post.bookmarked ?? post.isBookmarked ?? true; 
             
             const likeCount = post.likeCount ?? post.likes ?? 0;
-            const repostCount = post.repostCount ?? post.repostCount ?? post.reposts ?? 0;
+            const repostCount = post.repostCount ?? post.reposts ?? 0;
             const replyCount = post.replyCount ?? post.replies ?? 0;
 
             return (
@@ -117,7 +188,8 @@ function BookmarksPage() {
                 isBookmarked={isBookmarked}
                 onClick={() => navigate(`/posts/${postId}`)}
                 onBookmark={() => handleBookmark(postId, isBookmarked)}
-                // 필요시 onLike, onRepost 핸들러도 HomePage처럼 연결해 줍니다.[cite: 8]
+                onLike={() => handleLike(postId, isLiked)}
+                onRepost={() => handleRepost(postId, isReposted)}
               />
             );
           })
