@@ -131,7 +131,7 @@ function RightSidebar() {
         </div>
         <div style={{ margin: '12px 0' }}>
           <p style={{ fontSize: '12px', color: '#536471' }}>기술 · 트렌드</p>
-          <p style={{ fontWeight: 'bold' }}>#React</p>
+          <p style={{ fontWeight: 'bold' }}>React</p>
           <p style={{ fontSize: '12px', color: '#536471' }}>8,520 게시물</p>
         </div>
       </div>
