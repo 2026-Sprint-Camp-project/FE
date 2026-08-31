@@ -71,6 +71,7 @@
 }
 
 .addSection > :global(form) {
+  width: auto;
   margin: 0 20px 12px;
 }
 
@@ -80,6 +81,7 @@
 }
 
 .searchResults > * {
+  box-sizing: border-box;
   padding: 8px 20px;
 }
 
@@ -93,6 +95,7 @@
 }
 
 .list > * {
+  box-sizing: border-box;
   padding: 12px 20px;
   border-bottom: 1px solid var(--border);
 }
