@@ -15,6 +15,14 @@ import Tabs from '../../components/Tabs/Tabs';
 import ComposeBox from '../../components/ComposeBox/ComposeBox';
 import TweetCard from '../../components/TweetCard/TweetCard';
 
+// 다양한 백엔드 데이터 타입(1/0, "true"/"false", boolean)을 안전하게 boolean으로 변환
+const toBoolean = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') return value === 'true' || value === '1';
+  return false;
+};
+
 function HomePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('recommend');
@@ -58,14 +66,14 @@ function HomePage() {
     }
   };
 
-  // 좋아요 클릭 핸들러 예시
+  // 3. 좋아요 상호작용
   const handleLike = async (postId, currentIsLiked, currentLikeCount) => {
     const nextIsLiked = !currentIsLiked;
     const nextLikeCount = nextIsLiked
       ? currentLikeCount + 1
       : Math.max(0, currentLikeCount - 1);
 
-    // 1. UI 즉시 반영 (낙관적 업데이트)
+    // UI 즉시 반영 (낙관적 업데이트)
     setPosts((prev) =>
       prev.map((post) => {
         const id = post.postId || post.id;
@@ -74,14 +82,16 @@ function HomePage() {
             ...post,
             isLiked: nextIsLiked,
             liked: nextIsLiked,
+            is_liked: nextIsLiked,
             likeCount: nextLikeCount,
+            likes: nextLikeCount,
           };
         }
         return post;
       })
     );
 
-    // 2. API 호출 및 409 예외 처리
+    // API 호출 및 409 예외 처리
     try {
       if (nextIsLiked) {
         await likePost(postId);
@@ -89,22 +99,20 @@ function HomePage() {
         await unlikePost(postId);
       }
     } catch (err) {
-      // 409 Conflict 발생 시 (이미 좋아요 상태인 경우)
       if (err.response?.status === 409) {
         console.warn('이미 좋아요 처리된 게시글입니다. 상태를 true로 유지합니다.');
-        // 409 에러가 났다면 이미 누른 상태이므로 UI를 true 상태로 확정
         setPosts((prev) =>
           prev.map((post) => {
             const id = post.postId || post.id;
             if (id === postId) {
-              return { ...post, isLiked: true, liked: true };
+              return { ...post, isLiked: true, liked: true, is_liked: true };
             }
             return post;
           })
         );
       } else {
         console.error('좋아요 처리 실패:', err);
-        fetchPosts(); // 일반 에러 시에만 기존 데이터 원복
+        fetchPosts();
       }
     }
   };
@@ -127,9 +135,10 @@ function HomePage() {
           return {
             ...post,
             isReposted: nextIsReposted,
-            reposted: nextIsReposted, // 백엔드 필드명(reposted) 동기화
+            reposted: nextIsReposted,
+            is_reposted: nextIsReposted,
             repostCount: nextRepostCount,
-            repostCount: nextRepostCount,
+            reposts: nextRepostCount,
           };
         }
         return post;
@@ -138,13 +147,26 @@ function HomePage() {
 
     try {
       if (nextIsReposted) {
-        await repostPost(postId);
+        await rePost(postId);
       } else {
-        await unrepostPost(postId);
+        await unrePost(postId);
       }
     } catch (err) {
-      console.error('리트윗 처리 실패:', err);
-      fetchPosts();
+      if (err.response?.status === 409) {
+        console.warn('이미 리포스트 처리된 게시글입니다. 상태를 true로 유지합니다.');
+        setPosts((prev) =>
+          prev.map((post) => {
+            const id = post.postId || post.id;
+            if (id === postId) {
+              return { ...post, isReposted: true, reposted: true, is_reposted: true };
+            }
+            return post;
+          })
+        );
+      } else {
+        console.error('리트윗 처리 실패:', err);
+        fetchPosts();
+      }
     }
   };
 
@@ -160,6 +182,7 @@ function HomePage() {
             ...post,
             isBookmarked: nextIsBookmarked,
             bookmarked: nextIsBookmarked,
+            is_bookmarked: nextIsBookmarked,
           };
         }
         return post;
@@ -174,12 +197,12 @@ function HomePage() {
       }
     } catch (err) {
       if (err.response?.status === 409) {
-        console.warn('이미 북마크 처리된 게시글입니다.');
+        console.warn('이미 북마크 처리된 게시글입니다. 상태를 true로 유지합니다.');
         setPosts((prev) =>
           prev.map((post) => {
             const id = post.postId || post.id;
             if (id === postId) {
-              return { ...post, isBookmarked: true, bookmarked: true };
+              return { ...post, isBookmarked: true, bookmarked: true, is_bookmarked: true };
             }
             return post;
           })
@@ -219,23 +242,22 @@ function HomePage() {
         posts.map((post) => {
           const postId = post.postId || post.id;
 
-          // ✨ API 명세서의 liked, reposted, bookmarked 값을 최우선으로 확인!
-          const isLiked = post.liked ?? post.isLiked ?? false;
-          const isReposted = post.reposted ?? post.isReposted ?? false;
-          const isBookmarked = post.bookmarked ?? post.isBookmarked ?? false;
+          // snake_case, camelCase, 단수형 키 형태 모두를 다각도로 탐색하여 boolean 변환
+          const isLiked = toBoolean(post.liked ?? post.isLiked ?? post.is_liked);
+          const isReposted = toBoolean(post.reposted ?? post.isReposted ?? post.is_reposted);
+          const isBookmarked = toBoolean(post.bookmarked ?? post.isBookmarked ?? post.is_bookmarked);
 
-          // 카운트 필드명도 안전하게 전부 탐색
-          const likeCount = post.likeCount ?? post.likes ?? 0;
-          const repostCount =
-            post.repostCount ?? post.repostCount ?? post.reposts ?? 0;
-          const replyCount = post.replyCount ?? post.replies ?? 0;
+          // 카운트 숫자 탐색
+          const likeCount = post.likeCount ?? post.likes ?? post.like_count ?? 0;
+          const repostCount = post.repostCount ?? post.reposts ?? post.repost_count ?? 0;
+          const replyCount = post.replyCount ?? post.replies ?? post.reply_count ?? 0;
 
           return (
             <TweetCard
-              key={post.postId || post.id}
-              isLiked={post.liked ?? post.isLiked ?? false}
-              isBookmarked={post.bookmarked ?? post.isBookmarked ?? false}
-              isReposted={post.reposted ?? post.isReposted ?? false}
+              key={postId}
+              isLiked={isLiked}
+              isBookmarked={isBookmarked}
+              isReposted={isReposted}
               author={{
                 name: post.name || post.authorName || post.user?.name || '사용자',
                 username: post.username || post.user?.username || 'user',
@@ -251,9 +273,6 @@ function HomePage() {
                 reposts: repostCount,
                 likes: likeCount,
               }}
-              //isLiked={isLiked}
-              //isReposted={isReposted}
-              //isBookmarked={isBookmarked}
               onClick={() => navigate(`/posts/${postId}`)}
               onReply={() => navigate(`/posts/${postId}`)}
               onLike={() => handleLike(postId, isLiked, likeCount)}

@@ -1,0 +1,134 @@
+.card {
+  padding: 16px;
+  border-bottom: 1px solid #eff3f4;
+  background-color: #ffffff;
+}
+
+/* 1. 상단 프로필 및 버튼 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.authorInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.authorText {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0f1419;
+}
+
+.username {
+  font-size: 14px;
+  color: #536471;
+}
+
+.actionGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.editButton {
+  background: none;
+  border: none;
+  color: #1d9bf0;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+}
+
+.editButton:hover {
+  text-decoration: underline;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: #f4212e;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+}
+
+.deleteButton:hover {
+  text-decoration: underline;
+}
+
+/* 2. 트윗 본문 */
+.body {
+  margin-bottom: 16px;
+  font-size: 20px;
+  line-height: 1.4;
+  color: #0f1419;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 3. 작성 시간 */
+.time {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eff3f4;
+  font-size: 15px;
+  color: #536471;
+}
+
+/* 4. 통계 바 */
+.stats {
+  display: flex;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #eff3f4;
+  font-size: 15px;
+  color: #536471;
+}
+
+.statNumber {
+  color: #0f1419;
+}
+
+/* 5. 하단 액션 버튼 */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 12px;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 15px;
+  color: #536471;
+  cursor: pointer;
+}
+
+/* 액션 상태 색상 정의 */
+.reposted {
+  color: #00ba7c !important; /* 리포스트 활성화 초록색 */
+}
+
+.liked {
+  color: #f91880 !important; /* 좋아요 활성화 분홍/빨강 */
+}
+
+.bookmarked {
+  color: #1d9bf0 !important; /* 북마크 활성화 파랑 */
+}

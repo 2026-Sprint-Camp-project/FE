@@ -87,8 +87,8 @@
   cursor: pointer;
 }
 
-.retweeted {
-  color: var(--accent);
+.reposted {
+  color: #00ba7c;
 }
 
 .liked {
@@ -97,4 +97,13 @@
 
 .bookmarked {
   color: var(--accent);
+}
+
+.card {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out; /* 부드러운 전환 효과 */
+}
+
+.card:hover {
+  background-color: rgba(0, 0, 0, 0.03); /* 진짜 X 특유의 연한 회색 배경 */
 }

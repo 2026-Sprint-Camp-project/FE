@@ -1,176 +1,140 @@
-// src/components/MainTweetCard/MainTweetCard.jsx
 import React from 'react';
 import Avatar from '../Avatar/Avatar';
-import { useNavigate } from 'react-router-dom';
 import Icon from '../Icon/Icon';
+import styles from './MainTweetCard.module.css';
+import { useNavigate } from 'react-router-dom';
 
 function MainTweetCard({
   author = {},
   createdAt,
   content,
+  postId,
   counts = {},
-  isLiked = false,
-  isReposted = false,
-  isBookmarked = false,
+  // API 속성명(liked, reposted 등)과 Prop명(isLiked 등) 둘 다 지원하도록 수정
+  liked,
+  isLiked = liked ?? false,
+  reposted,
+  isReposted = reposted ?? false,
+  isRetweeted = false,
+  bookmarked,
+  isBookmarked = bookmarked ?? false,
   onReply,
   onRepost,
+  onRetweet,
   onLike,
   onBookmark,
   onShare,
-  onMoreClick,
+  onEdit,
   onDelete,
+  onProfileClick,
+  onUserClick,
 }) {
-  const navigate = useNavigate(); // 👈 추가
-
-  // 👈 프로필 클릭 핸들러 추가
-  const handleProfileClick = (event) => {
-    event.stopPropagation();
-    if (author?.username) {
-      navigate(`/${author.username}`);
-    }
-  };
+  const repostCount = counts.reposts ?? counts.retweets ?? 0;
+  const handleRepost = onRepost || onRetweet;
+  const isRepostActive = isReposted || isRetweeted;
+  const handleProfileClick = onProfileClick || onUserClick;
+  const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '16px', borderBottom: '1px solid #EFF3F4', backgroundColor: '#ffffff' }}>
-      
-      {/* ✨ 상단 프로필 및 우측 삭제 버튼 영역 */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', /* 좌우 양 끝으로 밀어내기 */
-        alignItems: 'flex-start', 
-        marginBottom: '16px' 
-      }}>
-        
-        {/* 1. 좌측: 프로필 이미지 및 사용자 이름/아이디 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div className={styles.card}>
+      {/* 1. 상단 정보 */}
+      <div className={styles.header}>
+        <div
+          className={styles.authorInfo}
+          onClick={handleProfileClick}
+          style={{ cursor: handleProfileClick ? 'pointer' : 'default' }}
+        >
           <Avatar src={author.avatarUrl} name={author.name} size={48} />
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#0F1419' }}>
-              {author.name || '사용자'}
-            </span>
-            <span style={{ fontSize: '14px', color: '#536471' }}>
+          <div className={styles.authorText}>
+            <span className={styles.name}>{author.name || '사용자'}</span>
+            <span className={styles.username}>
               @{author.username || 'user'}
             </span>
           </div>
         </div>
         
-        {/* 2. 우측: 삭제 버튼 (이름 맨 우측에 배치) */}
+        <div className={styles.actionGroup}>
+          {onEdit && (
+            <button className={styles.editButton} onClick={onEdit}>
+              수정
+            </button>
+          )}
         {onDelete && (
-          <button 
-            onClick={onDelete}
-            style={{ 
-              background: 'none', 
-              border: 'none', 
-              cursor: 'pointer', 
-              color: '#F91880', // 삭제를 의미하는 빨간(핑크)색
-              fontSize: '15px',
-              fontWeight: 'bold',
-              padding: '4px 8px' // 클릭하기 편하게 약간의 패딩 추가
-            }}
-          >
+          <button type="button" onClick={onDelete} className={styles.deleteButton}>
             삭제
           </button>
         )}
+        </div>
+        
       </div>
 
       {/* 2. 트윗 본문 */}
-      <div style={{
-        fontSize: '20px',
-        lineHeight: '1.4',
-        color: '#0F1419',
-        marginBottom: '16px',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word'
-      }}>
-        {content}
-      </div>
+      <div className={styles.body}>{content}</div>
 
       {/* 3. 작성 시간 */}
-      <div style={{ fontSize: '15px', color: '#536471', paddingBottom: '16px', borderBottom: '1px solid #EFF3F4' }}>
-        {createdAt || '방금 전'}
-      </div>
+      <div className={styles.time}>{createdAt || '방금 전'}</div>
 
-      {/* 4. 중단 통계 바 (리트윗 / 마음에 들어요 총 수) */}
-      {(counts.reposts > 0 || counts.likes > 0) && (
-        <div style={{
-          display: 'flex',
-          gap: '20px',
-          padding: '16px 0',
-          borderBottom: '1px solid #EFF3F4',
-          fontSize: '15px',
-          color: '#536471'
-        }}>
-          {counts.reposts > 0 && (
-            <div><strong style={{ color: '#0F1419' }}>{counts.reposts}</strong> 리트윗</div>
+      {/* 4. 통계 바 */}
+      {(repostCount > 0 || counts.likes > 0) && (
+        <div className={styles.stats}>
+          {repostCount > 0 && (
+            <div
+              onClick={() => navigate(`/posts/${postId}/engagements?tab=reposts`)}
+              style={{ cursor: 'pointer' }}
+            >
+              <strong className={styles.statNumber}>{repostCount}</strong> 리포스트
+            </div>
           )}
           {counts.likes > 0 && (
-            <div><strong style={{ color: '#0F1419' }}>{counts.likes}</strong> 마음에 들어요</div>
+            <div
+              onClick={() => navigate(`/posts/${postId}/engagements?tab=likes`)}
+              style={{ cursor: 'pointer' }}
+            >
+              <strong className={styles.statNumber}>{counts.likes}</strong> 마음에 들어요
+            </div>
           )}
         </div>
       )}
 
-      {/* 5. ✨ 하단 아이콘 + 숫자 표시 버튼 바 */}
-      <div style={{ display: 'flex', justifyContent: 'space-around', paddingTop: '12px' }}>
-        
-        {/* 답글 아이콘 + 숫자 */}
-        <button type="button" style={actionBtnStyle} onClick={onReply}>
-          <Icon name="reply" size={20} color="#536471" />
-          <span style={{ fontSize: '13px', color: '#536471' }}>
-            {counts.replies ?? 0}
-          </span>
+      {/* 5. 하단 액션 버튼 */}
+      <div className={styles.actions}>
+        <button type="button" className={styles.action} onClick={onReply}>
+          <Icon name="reply" size={24} />
+          {typeof counts.replies === 'number' && <span>{counts.replies}</span>}
         </button>
 
-        {/* 리포스트 아이콘 + 숫자 */}
-        <button 
-          type="button" 
-          style={actionBtnStyle} 
-          onClick={onRepost}
+        <button
+          type="button"
+          className={`${styles.action} ${isRepostActive ? styles.reposted : ''}`}
+          onClick={handleRepost}
         >
-          <Icon name="repost" size={20} color={isReposted ? '#00BA7C' : '#536471'} />
-          <span style={{ fontSize: '13px', color: isReposted ? '#00BA7C' : '#536471' }}>
-            {counts.reposts ?? counts.retweets ?? 0}
-          </span>
+          <Icon name="repost" size={24} />
+          {typeof repostCount === 'number' && <span>{repostCount}</span>}
         </button>
 
-        {/* 좋아요 아이콘 + 숫자 */}
-        <button 
-          type="button" 
-          style={actionBtnStyle} 
+        <button
+          type="button"
+          className={`${styles.action} ${isLiked ? styles.liked : ''}`}
           onClick={onLike}
         >
-          <Icon name="heart" size={20} color={isLiked ? '#F91880' : '#536471'} />
-          <span style={{ fontSize: '13px', color: isLiked ? '#F91880' : '#536471' }}>
-            {counts.likes ?? 0}
-          </span>
+          <Icon name="heart" size={24} />
+          {typeof counts.likes === 'number' && <span>{counts.likes}</span>}
         </button>
 
-        {/* 북마크 아이콘 */}
-        <button type="button" style={actionBtnStyle} onClick={onBookmark}>
-          <Icon name="bookmark" size={20} color={isBookmarked ? '#1D9BF0' : '#536471'} />
+        <button
+          type="button"
+          className={`${styles.action} ${isBookmarked ? styles.bookmarked : ''}`}
+          onClick={onBookmark}
+        >
+          <Icon name="bookmark" size={24} />
         </button>
 
-        {/* 공유 아이콘 */}
-        <button type="button" style={actionBtnStyle} onClick={onShare}>
-          <Icon name="share" size={20} color="#536471" />
+        <button type="button" className={styles.action} onClick={onShare}>
+          <Icon name="share" size={24} />
         </button>
-
       </div>
-
     </div>
   );
 }
-
-// 아이콘과 숫자가 가로로 정렬되도록 정돈된 버튼 스타일
-const actionBtnStyle = {
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px', // 아이콘과 숫자 사이 간격
-  padding: '8px 12px',
-  borderRadius: '20px',
-  transition: 'background-color 0.2s',
-};
 
 export default MainTweetCard;

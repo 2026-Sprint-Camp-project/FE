@@ -41,7 +41,7 @@ function ProfilePage() {
 
   const isOwnProfile = currentUser?.username === username;
 
-  // 1. 프로필 정보 로드 (어떤 탭이든 무조건 가장 먼저 실행)
+  // 1. 프로필 정보 로드
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
@@ -146,6 +146,7 @@ function ProfilePage() {
     };
   }, [activeTab, username]);
 
+  // 상호작용 핸들러
   const handleFollowToggle = async () => {
     userToggledRef.current = true;
     const targetId = Number(profile.userId);
@@ -162,6 +163,88 @@ function ProfilePage() {
       else if (err.status === 404) setIsFollowing(false);
       else window.alert(err.message || '요청에 실패했습니다.');
     }
+  };
+
+  const handleToggleLike = async (e, postId, isLiked) => {
+    e.stopPropagation();
+    try {
+      if (isLiked) {
+        await postsApi.unlikePost(postId);
+      } else {
+        await postsApi.likePost(postId);
+      }
+      setPosts((prev) =>
+        prev.map((p) => {
+          if ((p.postId || p.id) === postId) {
+            const currentLikes = p.likeCount ?? 0;
+            return {
+              ...p,
+              liked: !isLiked,
+              isLiked: !isLiked,
+              likeCount: isLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1,
+            };
+          }
+          return p;
+        })
+      );
+    } catch (err) {
+      console.error('좋아요 처리 실패:', err);
+    }
+  };
+
+  const handleToggleRepost = async (e, postId, isReposted) => {
+    e.stopPropagation();
+    try {
+      if (isReposted) {
+        await postsApi.unrepost(postId);
+      } else {
+        await postsApi.repost(postId);
+      }
+      setPosts((prev) =>
+        prev.map((p) => {
+          if ((p.postId || p.id) === postId) {
+            const currentCount = p.repostCount ?? p.retweetCount ?? 0;
+            const nextCount = isReposted ? Math.max(0, currentCount - 1) : currentCount + 1;
+            return {
+              ...p,
+              reposted: !isReposted,
+              isReposted: !isReposted,
+              repostCount: nextCount,
+            };
+          }
+          return p;
+        })
+      );
+    } catch (err) {
+      console.error('리포스트 처리 실패:', err);
+    }
+  };
+
+  const handleToggleBookmark = async (e, postId, isBookmarked) => {
+    e.stopPropagation();
+    try {
+      if (isBookmarked) {
+        await postsApi.unbookmark(postId);
+      } else {
+        await postsApi.bookmark(postId);
+      }
+      setPosts((prev) =>
+        prev.map((p) =>
+          (p.postId || p.id) === postId
+            ? { ...p, bookmarked: !isBookmarked, isBookmarked: !isBookmarked }
+            : p
+        )
+      );
+    } catch (err) {
+      console.error('북마크 처리 실패:', err);
+    }
+  };
+
+  const handleShare = (e, postId) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/posts/${postId}`;
+    navigator.clipboard.writeText(url);
+    alert('게시물 링크가 클립보드에 복사되었습니다.');
   };
 
   if (isLoading) return null;
