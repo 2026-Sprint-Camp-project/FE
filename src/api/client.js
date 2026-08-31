@@ -47,6 +47,21 @@ export function clearTokens() {
   localStorage.removeItem(REFRESH_TOKEN_KEY);
 }
 
+// 회원가입/프로필 수정 시 입력한 생년월일을 로컬에 보관하는 보조 캐시.
+// 백엔드 /users/me 응답이 birthDate를 내려주지 않는 경우가 있어, 사용자가 직접
+// 입력했던 값을 프로필 수정 화면에서 되살려 보여주기 위해 username 단위로 저장한다.
+const BIRTHDATE_KEY_PREFIX = 'birthDate:';
+
+export function saveLocalBirthDate(username, birthDate) {
+  if (!username || !birthDate) return;
+  localStorage.setItem(`${BIRTHDATE_KEY_PREFIX}${username}`, birthDate);
+}
+
+export function getLocalBirthDate(username) {
+  if (!username) return '';
+  return localStorage.getItem(`${BIRTHDATE_KEY_PREFIX}${username}`) ?? '';
+}
+
 /** 인증이 필요한 요청에 붙이는 Authorization 헤더 */
 export function authHeader() {
   const token = getAccessToken();

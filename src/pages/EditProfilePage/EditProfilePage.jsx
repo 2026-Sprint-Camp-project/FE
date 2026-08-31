@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
 import * as usersApi from '../../api/users';
+import { getLocalBirthDate, saveLocalBirthDate } from '../../api/client';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './EditProfilePage.module.css';
 
@@ -31,11 +32,14 @@ function EditProfilePage() {
       .then((data) => {
         if (cancelled) return;
         const user = data.user;
+        // 백엔드가 /users/me 응답에 birthDate를 안 내려주는 경우, 회원가입 때
+        // 입력해서 로컬에 남겨둔 값으로 채워준다(사용자가 입력한 적이 없으면 빈 값 그대로).
+        const birthDate = user.birthDate ?? getLocalBirthDate(user.username);
         setForm({
           name: user.name ?? '',
           bio: user.bio ?? '',
           location: user.location ?? '',
-          birthDate: user.birthDate ?? '',
+          birthDate,
           profileImageUrl: user.profileImageUrl ?? '',
           bannerImageUrl: user.bannerImageUrl ?? '',
         });
@@ -65,6 +69,7 @@ function EditProfilePage() {
     try {
       const payload = { ...form, birthDate: form.birthDate || null };
       const data = await usersApi.updateMe(payload);
+      saveLocalBirthDate(data.user.username, form.birthDate);
       refreshAuth();
       navigate(`/${data.user.username}`);
     } catch (err) {
