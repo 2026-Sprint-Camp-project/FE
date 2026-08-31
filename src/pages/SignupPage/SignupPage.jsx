@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signup, saveTokens } from '../../api/auth';
+import { signup, saveTokens, saveLocalBirthDate } from '../../api/auth';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './SignupPage.module.css';
 
@@ -39,6 +39,9 @@ function SignupPage() {
     try {
       const data = await signup(formData);
       saveTokens(data.token);
+      // 백엔드가 /users/me 응답에 birthDate를 내려주지 않는 경우를 대비해
+      // 가입 시 입력한 값을 로컬에 남겨 프로필 수정 화면에서 되살린다.
+      saveLocalBirthDate(data.user.username, birthDate);
       refreshAuth();
       navigate(`/${data.user.username}`);
     } catch (err) {

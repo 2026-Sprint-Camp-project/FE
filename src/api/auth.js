@@ -1,6 +1,13 @@
-import { request, saveTokens, getAccessToken, clearTokens } from './client';
+import {
+  request,
+  saveTokens,
+  getAccessToken,
+  clearTokens,
+  saveLocalBirthDate,
+  getLocalBirthDate,
+} from './client';
 
-export { saveTokens, getAccessToken, clearTokens };
+export { saveTokens, getAccessToken, clearTokens, saveLocalBirthDate, getLocalBirthDate };
 
 /**
  * 회원가입
